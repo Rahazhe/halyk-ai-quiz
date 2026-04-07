@@ -275,10 +275,13 @@ h1,h2,h3,h4{letter-spacing:-0.01em}
     <div class="auto-hint" id="autoHint">Автопереход через секунду...</div>
   </div>
 
-  <!-- Screen 4: Results -->
+  <!-- Screen 4: Beta Testing -->
+  <div id="s-beta" class="screen"></div>
+
+  <!-- Screen 5: Results -->
   <div id="s-results" class="screen"></div>
 
-  <!-- Screen 5: Thank You -->
+  <!-- Screen 6: Thank You -->
   <div id="s-thanks" class="screen thanks"></div>
 </div>
 
@@ -379,6 +382,7 @@ let answers = [];
 let autoTimer = null;
 let startTime = 0;
 let userData = { name: null, department: null, consent: false };
+let betaData = { interest: false, phone: null, email: null };
 let submitted = false;
 const TOTAL = questions.length;
 const MARKERS = ['\u0410', '\u0411', '\u0412', '\u0413'];
@@ -567,11 +571,110 @@ function navTo(idx) {
 }
 
 $('btnNextQ').addEventListener('click', () => {
-  if (cur === TOTAL - 1) showResults(); else nextQ();
+  if (cur === TOTAL - 1) showBeta(); else nextQ();
 });
 $('btnPrev').addEventListener('click', prevQ);
 
-/* ===== Screen 4: Results ===== */
+/* ===== Screen 4: Beta Testing ===== */
+function showBeta() {
+  clearTimeout(autoTimer);
+  $('kbHint').classList.remove('show');
+  const el = $('s-beta');
+  while (el.firstChild) el.removeChild(el.firstChild);
+
+  const h2 = document.createElement('h2');
+  h2.textContent = 'Хотите принять участие в бета-тестировании наших продуктов?';
+  el.appendChild(h2);
+
+  const sub = document.createElement('p');
+  sub.style.cssText = 'font-size:15px;color:#6B7280;margin-bottom:32px;margin-top:8px';
+  sub.textContent = 'Вы одними из первых попробуете новые AI-функции Halyk Bank';
+  el.appendChild(sub);
+
+  // Contact form (hidden until "Да")
+  const form = document.createElement('div');
+  form.style.cssText = 'display:none;width:100%';
+
+  const formTitle = document.createElement('p');
+  formTitle.style.cssText = 'font-size:14px;color:#6B7280;margin-bottom:16px';
+  formTitle.textContent = 'Оставьте хотя бы один контакт — мы свяжемся с вами:';
+  form.appendChild(formTitle);
+
+  const phoneGroup = document.createElement('div');
+  phoneGroup.className = 'form-group';
+  const phoneLabel = document.createElement('label');
+  phoneLabel.className = 'form-label';
+  phoneLabel.textContent = 'Телефон';
+  const phoneInput = document.createElement('input');
+  phoneInput.type = 'tel';
+  phoneInput.className = 'form-input';
+  phoneInput.placeholder = '+7 (___) ___-__-__';
+  phoneGroup.appendChild(phoneLabel);
+  phoneGroup.appendChild(phoneInput);
+  form.appendChild(phoneGroup);
+
+  const emailGroup = document.createElement('div');
+  emailGroup.className = 'form-group';
+  const emailLabel = document.createElement('label');
+  emailLabel.className = 'form-label';
+  emailLabel.textContent = 'Email';
+  const emailInput = document.createElement('input');
+  emailInput.type = 'email';
+  emailInput.className = 'form-input';
+  emailInput.placeholder = 'you@example.com';
+  emailGroup.appendChild(emailLabel);
+  emailGroup.appendChild(emailInput);
+  form.appendChild(emailGroup);
+
+  const contactErr = document.createElement('div');
+  contactErr.style.cssText = 'color:#ef4444;font-size:12px;margin-top:4px;display:none';
+  contactErr.textContent = 'Укажите телефон или email';
+  form.appendChild(contactErr);
+
+  const btnSend = document.createElement('button');
+  btnSend.className = 'btn-primary';
+  btnSend.style.cssText = 'width:100%;margin-top:20px;justify-content:center';
+  btnSend.textContent = 'Продолжить';
+  btnSend.addEventListener('click', () => {
+    const phone = phoneInput.value.trim();
+    const email = emailInput.value.trim();
+    if (!phone && !email) { contactErr.style.display = 'block'; return; }
+    contactErr.style.display = 'none';
+    betaData = { interest: true, phone: phone || null, email: email || null };
+    showResults();
+  });
+  form.appendChild(btnSend);
+  el.appendChild(form);
+
+  // Yes / No buttons
+  const btnRow = document.createElement('div');
+  btnRow.className = 'btn-row';
+
+  const btnYes = document.createElement('button');
+  btnYes.className = 'btn-primary';
+  btnYes.textContent = 'Да, хочу';
+  btnYes.addEventListener('click', () => {
+    btnRow.style.display = 'none';
+    form.style.display = 'block';
+    phoneInput.focus();
+  });
+
+  const btnNo = document.createElement('button');
+  btnNo.className = 'btn-outline';
+  btnNo.textContent = 'Нет, спасибо';
+  btnNo.addEventListener('click', () => {
+    betaData = { interest: false, phone: null, email: null };
+    showResults();
+  });
+
+  btnRow.appendChild(btnYes);
+  btnRow.appendChild(btnNo);
+  el.appendChild(btnRow);
+
+  showScreen('s-beta');
+}
+
+/* ===== Screen 5: Results ===== */
 function calcScores() {
   const sc = { tax_adviser: 0, voice: 0, chat: 0 };
   const pr = { visionary: 0, pragmatist: 0, optimizer: 0 };
@@ -752,7 +855,10 @@ async function doSubmit(productScores, profileScores, profile, recommendedProduc
     recommended_product: recommendedProduct,
     profile: profile,
     device: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
-    duration_ms: Date.now() - startTime
+    duration_ms: Date.now() - startTime,
+    beta_interest: betaData.interest,
+    beta_phone: betaData.phone,
+    beta_email: betaData.email
   };
 
   // Try Edge Function first
@@ -845,6 +951,7 @@ function restart() {
   answers = [];
   submitted = false;
   userData = { name: null, department: null, consent: false };
+  betaData = { interest: false, phone: null, email: null };
   clearTimeout(autoTimer);
   $('userName').value = '';
   $('userDept').value = '';

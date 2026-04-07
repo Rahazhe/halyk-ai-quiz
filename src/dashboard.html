@@ -307,7 +307,9 @@ function updateFeed(feed){
 
     var name=document.createElement('span');
     var stableNum=parseInt(e.id.replace(/-/g,'').slice(-5),16)%1000;
-    var dn=e.display_name&&e.display_name!=='\u0410\u043D\u043E\u043D\u0438\u043C'?e.display_name:'\u0410\u043D\u043E\u043D\u0438\u043C #'+stableNum;
+    var rawName=e.display_name||e.user_name||'';
+    var isAnon=!rawName||rawName==='\u0410\u043D\u043E\u043D\u0438\u043C';
+    var dn=isAnon?'\u0410\u043D\u043E\u043D\u0438\u043C #'+stableNum:rawName;
     name.textContent=e.department?dn+', '+e.department:dn;
     info.appendChild(name);
 

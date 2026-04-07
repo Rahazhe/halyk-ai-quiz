@@ -157,6 +157,9 @@ interface ValidatedBody {
   answers: number[];
   device: string;
   duration_ms: number;
+  beta_interest: boolean;
+  beta_phone: string | null;
+  beta_email: string | null;
 }
 
 function validateBody(body: unknown): { data?: ValidatedBody; error?: string } {
@@ -233,6 +236,19 @@ function validateBody(body: unknown): { data?: ValidatedBody; error?: string } {
     return { error: 'consent must be true when user_name is provided' };
   }
 
+  // --- beta fields (all optional) ---
+  const beta_interest = b.beta_interest === true;
+  let beta_phone: string | null = null;
+  let beta_email: string | null = null;
+  if (beta_interest) {
+    if (b.beta_phone != null && typeof b.beta_phone === 'string') {
+      beta_phone = sanitize(b.beta_phone, 30) || null;
+    }
+    if (b.beta_email != null && typeof b.beta_email === 'string') {
+      beta_email = sanitize(b.beta_email, 100) || null;
+    }
+  }
+
   return {
     data: {
       user_name,
@@ -242,6 +258,9 @@ function validateBody(body: unknown): { data?: ValidatedBody; error?: string } {
       answers: b.answers as number[],
       device: b.device as string,
       duration_ms: b.duration_ms as number,
+      beta_interest,
+      beta_phone,
+      beta_email,
     },
   };
 }
@@ -334,6 +353,9 @@ serve(async (req: Request) => {
     device: data.device,
     duration_ms: data.duration_ms,
     ip_hash: ipHash,
+    beta_interest: data.beta_interest,
+    beta_phone: data.beta_phone,
+    beta_email: data.beta_email,
   });
 
   if (insertError) {
