@@ -15,7 +15,7 @@
   --text-secondary:#94a3b8;--text-muted:#64748b;--border:rgba(255,255,255,0.06);
   --radius-lg:16px;--radius-sm:8px;--font:'Manrope',system-ui,sans-serif;
 }
-html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text-primary);font-family:var(--font);-webkit-font-smoothing:antialiased}
+html,body{height:100%;overflow-y:auto;background:var(--bg);color:var(--text-primary);font-family:var(--font);-webkit-font-smoothing:antialiased}
 body.hide-cursor,body.hide-cursor *{cursor:none!important}
 
 /* Layout */
@@ -306,7 +306,8 @@ function updateFeed(feed){
     info.className='feed-info';
 
     var name=document.createElement('span');
-    var dn=e.user_name?e.user_name:'\u0410\u043D\u043E\u043D\u0438\u043C #'+(e.row_num||(++anonCounter));
+    var stableNum=parseInt(e.id.replace(/-/g,'').slice(-5),16)%1000;
+    var dn=e.display_name&&e.display_name!=='\u0410\u043D\u043E\u043D\u0438\u043C'?e.display_name:'\u0410\u043D\u043E\u043D\u0438\u043C #'+stableNum;
     name.textContent=e.department?dn+', '+e.department:dn;
     info.appendChild(name);
 
