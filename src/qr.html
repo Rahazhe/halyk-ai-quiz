@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Halyk AI Quiz — QR Code</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: sans-serif;
+      background: #0B0F1A;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: #fff;
+      color: #0B0F1A;
+      border-radius: 24px;
+      padding: 48px;
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+    }
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      color: #068C6E;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 32px;
+    }
+    .qr-img {
+      width: 260px;
+      height: 260px;
+      border: 4px solid #068C6E;
+      border-radius: 12px;
+      margin-bottom: 28px;
+    }
+    .cta {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0B0F1A;
+      margin-bottom: 8px;
+    }
+    .hint {
+      font-size: 13px;
+      color: #666;
+    }
+    @media print {
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">Halyk AI Quiz</div>
+    <div class="subtitle">Demo Day 2026</div>
+    <img
+      class="qr-img"
+      src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=https%3A%2F%2Fhalyk-ai-quiz.vercel.app%2Fquiz.html"
+      alt="QR Code"
+    />
+    <div class="cta">Узнайте свой AI-профиль</div>
+    <div class="hint">Отсканируйте камерой телефона</div>
+  </div>
+</body>
+</html>
