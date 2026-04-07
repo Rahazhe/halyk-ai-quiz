@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed -i.bak 's|https://hqxsoccyqrotbqlzszhe.supabase.co/functions/v1/submit-quiz|YOUR_SUPABASE_URL/functions/v1/submit-quiz|g' /Users/rakhat/workspace/halyk_demo_day/halyk-ai-quiz/src/quiz.html)",
+      "Bash(rm -f /Users/rakhat/workspace/halyk_demo_day/halyk-ai-quiz/src/quiz.html.bak)",
+      "Bash(sed -i.bak 's|https://hqxsoccyqrotbqlzszhe.supabase.co|YOUR_SUPABASE_URL|g' /Users/rakhat/workspace/halyk_demo_day/halyk-ai-quiz/src/dashboard.html)",
+      "Bash(sed -i.bak 's|8E7F19A8-5197-4458-9C40-24A79CA7E089|YOUR_ANON_KEY|g' /Users/rakhat/workspace/halyk_demo_day/halyk-ai-quiz/src/dashboard.html)",
+      "Bash(rm -f /Users/rakhat/workspace/halyk_demo_day/halyk-ai-quiz/src/dashboard.html.bak)",
+      "Bash(bash:*)",
+      "Bash(curl -L https://github.com/supabase/cli/releases/latest/download/supabase_darwin_arm64.tar.gz -o /tmp/supabase.tar.gz)",
+      "Bash(tar -xzf /tmp/supabase.tar.gz -C /tmp)",
+      "Bash(sudo mv:*)",
+      "Bash(supabase --version)",
+      "Bash(mkdir -p ~/bin)",
+      "Bash(mv /tmp/supabase ~/bin/supabase)",
+      "Bash(export PATH=\"$HOME/bin:$PATH\")",
+      "Bash(~/bin/supabase --version)",
+      "Bash(supabase login:*)",
+      "Bash(supabase link:*)",
+      "Bash(export SUPABASE_ACCESS_TOKEN=sbp_8a813a9c4f648996cc770380c2823b2b3d5e2254)",
+      "Bash(supabase functions:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}

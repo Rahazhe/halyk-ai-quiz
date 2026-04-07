@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Halyk AI Quiz — Live Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0B0F1A;--bg-card:#1e293b;--primary:#068C6E;--primary-light:#0AAE8A;
+  --accent:#F9B000;--indigo:#6366F1;--text-primary:#f8fafc;
+  --text-secondary:#94a3b8;--text-muted:#64748b;--border:rgba(255,255,255,0.06);
+  --radius-lg:16px;--radius-sm:8px;--font:'Manrope',system-ui,sans-serif;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text-primary);font-family:var(--font);-webkit-font-smoothing:antialiased}
+body.hide-cursor,body.hide-cursor *{cursor:none!important}
+
+/* Layout */
+.dashboard{display:grid;min-height:100vh;padding:20px 28px;grid-template-rows:auto auto minmax(220px,1fr) minmax(200px,1fr);gap:16px;overflow-y:auto}
+
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between}
+.header-left{display:flex;align-items:center;gap:16px}
+.header-title{font-size:28px;font-weight:800;letter-spacing:-0.02em;background:linear-gradient(135deg,var(--primary-light),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.live-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:0.05em}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulse-dot 1.5s ease-in-out infinite}
+@keyframes pulse-dot{
+  0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(239,68,68,0.5)}
+  50%{opacity:0.7;box-shadow:0 0 0 6px rgba(239,68,68,0)}
+}
+.header-right{display:flex;align-items:center;gap:14px}
+.conn-status{width:10px;height:10px;border-radius:50%;transition:background 0.3s}
+.conn-status.connected{background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,0.5)}
+.conn-status.disconnected{background:#ef4444;box-shadow:0 0 6px rgba(239,68,68,0.5)}
+.logo-svg{height:40px}
+.logo-svg .h0{fill:#F8AE00}.logo-svg .h1{fill:none;stroke:#0AAE8A;stroke-miterlimit:10}.logo-svg .h2{fill:#0AAE8A}
+
+/* Counter Cards */
+.counters{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.counter-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px 20px;text-align:center;position:relative;overflow:hidden}
+.counter-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius-lg) var(--radius-lg) 0 0}
+.counter-card.total::before{background:linear-gradient(90deg,var(--primary-light),var(--accent))}
+.counter-card.visionary::before{background:var(--primary-light)}
+.counter-card.pragmatist::before{background:var(--accent)}
+.counter-card.optimizer::before{background:var(--indigo)}
+.counter-num{font-size:56px;font-weight:800;line-height:1;letter-spacing:-0.03em;margin-bottom:8px;font-variant-numeric:tabular-nums}
+.counter-card.total .counter-num{color:var(--text-primary)}
+.counter-card.visionary .counter-num{color:var(--primary-light)}
+.counter-card.pragmatist .counter-num{color:var(--accent)}
+.counter-card.optimizer .counter-num{color:var(--indigo)}
+.counter-label{font-size:15px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.04em}
+
+/* Charts */
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:20px;min-height:0}
+.chart-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column}
+.chart-title{font-size:16px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:20px}
+
+/* Bar Chart */
+.bar-chart{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px}
+.bar-row{display:flex;align-items:center;gap:14px}
+.bar-label{width:160px;font-size:16px;font-weight:600;color:var(--text-primary);text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:36px;background:rgba(255,255,255,0.05);border-radius:var(--radius-sm);overflow:hidden}
+.bar-fill{height:100%;border-radius:var(--radius-sm);transition:width 0.8s cubic-bezier(0.4,0,0.2,1);min-width:2px}
+.bar-fill.tax{background:linear-gradient(90deg,#056b54,var(--primary))}
+.bar-fill.voice{background:linear-gradient(90deg,#c78d00,var(--accent))}
+.bar-fill.chat{background:linear-gradient(90deg,#4f46e5,var(--indigo))}
+.bar-pct{width:60px;font-size:20px;font-weight:700;color:var(--text-primary);text-align:left;flex-shrink:0;font-variant-numeric:tabular-nums}
+
+/* Donut Chart */
+.donut-container{flex:1;display:flex;align-items:center;justify-content:center;gap:32px}
+.donut-wrapper{position:relative}
+.donut{width:200px;height:200px;border-radius:50%;transition:background 0.8s cubic-bezier(0.4,0,0.2,1)}
+.donut-hole{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;background:var(--bg-card);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.donut-center-num{font-size:36px;font-weight:800;color:var(--text-primary);line-height:1;font-variant-numeric:tabular-nums}
+.donut-center-label{font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;margin-top:4px}
+.donut-legend{display:flex;flex-direction:column;gap:14px}
+.legend-item{display:flex;align-items:center;gap:10px}
+.legend-dot{width:14px;height:14px;border-radius:4px;flex-shrink:0}
+.legend-dot.vis{background:var(--primary-light)}
+.legend-dot.prag{background:var(--accent)}
+.legend-dot.opt{background:var(--indigo)}
+.legend-text{font-size:15px;font-weight:600;color:var(--text-primary)}
+.legend-pct{font-size:15px;font-weight:700;color:var(--text-secondary);margin-left:auto;font-variant-numeric:tabular-nums}
+
+/* Live Feed */
+.feed-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 24px;overflow:hidden}
+.feed-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.feed-title{font-size:14px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.04em}
+.feed-count{font-size:13px;font-weight:600;color:var(--text-muted)}
+.feed-list{display:flex;flex-direction:column;gap:4px}
+.feed-item{display:grid;grid-template-columns:1fr auto;align-items:center;padding:8px 12px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);animation:feed-in 0.4s ease-out}
+.feed-item:nth-child(odd){background:rgba(255,255,255,0.03)}
+.feed-info{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:500;color:var(--text-primary);overflow:hidden}
+.feed-profile-tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:700;flex-shrink:0}
+.feed-profile-tag.visionary{background:rgba(10,174,138,0.15);color:var(--primary-light)}
+.feed-profile-tag.pragmatist{background:rgba(249,176,0,0.15);color:var(--accent)}
+.feed-profile-tag.optimizer{background:rgba(99,102,241,0.15);color:var(--indigo)}
+.feed-product{font-size:13px;font-weight:600;color:var(--text-muted);margin-left:4px}
+.feed-time{font-size:14px;font-weight:600;color:var(--text-muted);font-variant-numeric:tabular-nums;flex-shrink:0}
+.feed-arrow{color:var(--text-muted);margin:0 4px}
+@keyframes feed-in{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+</style>
+</head>
+<body>
+<div class="dashboard">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <span class="header-title">HALYK AI QUIZ</span>
+      <span class="live-badge"><span class="live-dot"></span> Live</span>
+    </div>
+    <div class="header-right">
+      <span class="conn-status disconnected" id="connStatus" title="Статус подключения"></span>
+      <svg class="logo-svg" viewBox="0 0 165 58" xmlns="http://www.w3.org/2000/svg"><g><g><path class="h0" d="M22.13,47.61c-0.76,0-1.53-0.29-2.11-0.87l-4.05-4.05h-5.73c-1.65,0-2.98-1.34-2.98-2.98v-5.73L3.2,29.92c-1.16-1.16-1.16-3.06,0-4.22l4.05-4.05v-5.73c0-1.65,1.34-2.98,2.98-2.98h5.73l4.05-4.05c1.16-1.16,3.06-1.16,4.22,0l4.05,4.05h5.73c1.65,0,2.98,1.34,2.98,2.98v5.73l4.05,4.05c1.16,1.16,1.16,3.06,0,4.22l-4.05,4.05v5.73c0,1.65-1.34,2.98-2.98,2.98H28.3l-4.05,4.05C23.66,47.32,22.9,47.61,22.13,47.61z"/><path class="h1" d="M42.2,25.83l-4.48-4.48v-6.34c0-1.54-1.25-2.79-2.79-2.79h-6.34l-4.48-4.48c-1.09-1.09-2.86-1.09-3.95,0l-4.48,4.48H9.34c-1.54,0-2.79,1.25-2.79,2.79v6.34l-4.48,4.48c-1.09,1.09-1.09,2.86,0,3.95l4.48,4.48v6.34c0,1.54,1.25,2.79,2.79,2.79h6.34l4.48,4.48c1.09,1.09,2.86,1.09,3.95,0l4.48-4.48h6.34c1.54,0,2.79-1.25,2.79-2.79v-6.34l4.48-4.48C43.29,28.69,43.29,26.92,42.2,25.83z M40.34,29.19l-4.35,4.35v6.16c0,1.08-0.88,1.96-1.96,1.96h-6.16l-4.35,4.35c-0.77,0.77-2.01,0.77-2.77,0l-4.35-4.35h-6.16c-1.08,0-1.96-0.88-1.96-1.96v-6.16l-4.35-4.35c-0.77-0.77-0.77-2.01,0-2.77l4.35-4.35v-6.16c0-1.08,0.88-1.96,1.96-1.96h6.16l4.35-4.35c0.77-0.77,2.01-0.77,2.77,0l4.35,4.35h6.16c1.08,0,1.96,0.88,1.96,1.96v6.16l4.35,4.35C41.11,27.19,41.11,28.43,40.34,29.19z"/><g><path class="h2" d="M20.7,11.93L6.26,26.37c-0.79,0.79-0.79,2.08,0,2.88l3.55,3.55c1.15-1.4,2.92-3.03,5.49-4.24c5.5-2.58,8.83-0.24,12.24-4.26c2.13-2.51,1.64-5.22,1.06-6.79c-0.23-0.6-0.59-1.14-1.04-1.6l-3.98-3.98C22.78,11.14,21.49,11.14,20.7,11.93z"/><path class="h2" d="M23.57,43.68l14.44-14.44c0.79-0.79,0.79-2.08,0-2.88l-3.55-3.55c-1.15,1.4-2.92,3.03-5.49,4.24c-5.5,2.58-8.83,0.24-12.24,4.26c-2.13,2.51-1.64,5.22-1.06,6.79c0.23,0.6,0.59,1.14,1.04,1.6l3.98,3.98C21.49,44.47,22.78,44.47,23.57,43.68z"/></g><path class="h2" d="M42.2,25.83l-4.48-4.48v-6.34c0-1.54-1.25-2.79-2.79-2.79h-6.34l-4.48-4.48c-1.09-1.09-2.86-1.09-3.95,0l-4.48,4.48H9.34c-1.54,0-2.79,1.25-2.79,2.79v6.34l-4.48,4.48c-1.09,1.09-1.09,2.86,0,3.95l4.48,4.48v6.34c0,1.54,1.25,2.79,2.79,2.79h6.34l4.48,4.48c1.09,1.09,2.86,1.09,3.95,0l4.48-4.48h6.34c1.54,0,2.79-1.25,2.79-2.79v-6.34l4.48-4.48C43.29,28.69,43.29,26.92,42.2,25.83z M40.34,29.19l-4.35,4.35v6.16c0,1.08-0.88,1.96-1.96,1.96h-6.16l-4.35,4.35c-0.77,0.77-2.01,0.77-2.77,0l-4.35-4.35h-6.16c-1.08,0-1.96-0.88-1.96-1.96v-6.16l-4.35-4.35c-0.77-0.77-0.77-2.01,0-2.77l4.35-4.35v-6.16c0-1.08,0.88-1.96,1.96-1.96h6.16l4.35-4.35c0.77-0.77,2.01-0.77,2.77,0l4.35,4.35h6.16c1.08,0,1.96,0.88,1.96,1.96v6.16l4.35,4.35C41.11,27.19,41.11,28.43,40.34,29.19z"/></g><path class="h2" d="M143.32,43.47h5.1v-11.3l9.15,11.3h6.18l-10.38-12.89l9.55-9.82h-5.97l-8.52,8.77V12.15h-5.1V43.47z M117.31,20.76l8.66,21.79l-0.22,0.6c-0.96,2.55-2.51,3.09-3.78,3.09c-0.47,0-1.03-0.04-1.48-0.18v4.61c0.45,0.18,1.41,0.4,2.6,0.4c4.18,0,6.24-2.77,8.01-7.34l8.88-22.98h-5.41l-5.79,15.97l-6-15.97H117.31z M108.1,36.98c0,4.34,1.95,6.89,6.13,6.89c1.19,0,2.1-0.22,2.55-0.4v-4.63c-0.38,0.11-0.76,0.2-1.25,0.2c-1.39,0-2.3-0.92-2.3-2.73V12.15h-5.12V36.98z M85.74,32.11c0-4.5,3.09-6.94,6.26-6.94c3.18,0,6.26,2.44,6.26,6.94c0,4.5-3.09,6.94-6.26,6.94C88.82,39.04,85.74,36.6,85.74,32.11z M80.43,32.11c0,7.52,5.24,11.77,10.65,11.77c3.69,0,6.06-1.92,7.12-3.51v3.11h5.12V20.76H98.2v3.09c-1.05-1.57-3.42-3.49-7.12-3.49C85.67,20.36,80.43,24.57,80.43,32.11z M51.33,43.47h5.28V29.8h14.83v13.67h5.28V12.15h-5.28v12.82H56.61V12.15h-5.28V43.47z"/></g></svg>
+    </div>
+  </div>
+
+  <!-- Counter Cards -->
+  <div class="counters">
+    <div class="counter-card total">
+      <div class="counter-num" id="cntTotal">0</div>
+      <div class="counter-label">Всего участников</div>
+    </div>
+    <div class="counter-card visionary">
+      <div class="counter-num" id="cntVisionary">0</div>
+      <div class="counter-label">Визионеры</div>
+    </div>
+    <div class="counter-card pragmatist">
+      <div class="counter-num" id="cntPragmatist">0</div>
+      <div class="counter-label">Прагматики</div>
+    </div>
+    <div class="counter-card optimizer">
+      <div class="counter-num" id="cntOptimizer">0</div>
+      <div class="counter-label">Оптимизаторы</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts">
+    <div class="chart-panel">
+      <div class="chart-title">Распределение продуктов</div>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label">AI Tax Adviser</span>
+          <div class="bar-track"><div class="bar-fill tax" id="barTax" style="width:0%"></div></div>
+          <span class="bar-pct" id="pctTax">0%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Голосовой Робот</span>
+          <div class="bar-track"><div class="bar-fill voice" id="barVoice" style="width:0%"></div></div>
+          <span class="bar-pct" id="pctVoice">0%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">ИИ Чат-бот</span>
+          <div class="bar-track"><div class="bar-fill chat" id="barChat" style="width:0%"></div></div>
+          <span class="bar-pct" id="pctChat">0%</span>
+        </div>
+      </div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">Профили участников</div>
+      <div class="donut-container">
+        <div class="donut-wrapper">
+          <div class="donut" id="donutChart"></div>
+          <div class="donut-hole">
+            <span class="donut-center-num" id="donutTotal">0</span>
+            <span class="donut-center-label">Всего</span>
+          </div>
+        </div>
+        <div class="donut-legend">
+          <div class="legend-item">
+            <span class="legend-dot vis"></span>
+            <span class="legend-text">Визионеры</span>
+            <span class="legend-pct" id="lgdVis">0%</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot prag"></span>
+            <span class="legend-text">Прагматики</span>
+            <span class="legend-pct" id="lgdPrag">0%</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot opt"></span>
+            <span class="legend-text">Оптимизаторы</span>
+            <span class="legend-pct" id="lgdOpt">0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Feed -->
+  <div class="feed-panel">
+    <div class="feed-header">
+      <span class="feed-title">Live-лента</span>
+      <span class="feed-count" id="feedCount">Последние 10 записей</span>
+    </div>
+    <div class="feed-list" id="feedList"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var CONFIG = {
+  SUPABASE_URL: 'https://hqxsoccyqrotbqlzszhe.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhxeHNvY2N5cXJvdGJxbHpzemhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NDE5MDcsImV4cCI6MjA5MTExNzkwN30.qJu9vxRbSv988K8oyfKHQ23XlsRKVYak6xm-gUMPIKo',
+  POLL_INTERVAL: 10000, FEED_LIMIT: 10, COUNTER_DURATION: 800
+};
+
+var DEMO_STATS = {
+  total:247,visionaries:89,pragmatists:112,optimizers:46,
+  tax_adviser_count:111,voice_count:79,chat_count:57
+};
+var DEMO_FEED = [
+  {user_name:'Арман',department:'IT',profile:'visionary',recommended_product:'tax_adviser',created_at:'2026-04-06T14:32:00Z'},
+  {user_name:null,department:null,profile:'pragmatist',recommended_product:'chat',created_at:'2026-04-06T14:30:00Z',row_num:45},
+  {user_name:'Динара',department:'HR',profile:'optimizer',recommended_product:'voice',created_at:'2026-04-06T14:28:00Z'},
+  {user_name:'Бауыржан',department:'Розница',profile:'visionary',recommended_product:'tax_adviser',created_at:'2026-04-06T14:25:00Z'},
+  {user_name:null,department:null,profile:'pragmatist',recommended_product:'voice',created_at:'2026-04-06T14:23:00Z',row_num:43},
+  {user_name:'Айгуль',department:'Маркетинг',profile:'visionary',recommended_product:'chat',created_at:'2026-04-06T14:20:00Z'},
+  {user_name:'Марат',department:'Финансы',profile:'optimizer',recommended_product:'tax_adviser',created_at:'2026-04-06T14:18:00Z'},
+  {user_name:null,department:null,profile:'visionary',recommended_product:'voice',created_at:'2026-04-06T14:15:00Z',row_num:41},
+  {user_name:'Нурлан',department:'IT',profile:'pragmatist',recommended_product:'tax_adviser',created_at:'2026-04-06T14:12:00Z'},
+  {user_name:'Сауле',department:'Комплаенс',profile:'optimizer',recommended_product:'chat',created_at:'2026-04-06T14:10:00Z'}
+];
+
+var PROFILE_LABELS = {visionary:'\u0412\u0438\u0437\u0438\u043E\u043D\u0435\u0440',pragmatist:'\u041F\u0440\u0430\u0433\u043C\u0430\u0442\u0438\u043A',optimizer:'\u041E\u043F\u0442\u0438\u043C\u0438\u0437\u0430\u0442\u043E\u0440'};
+var PRODUCT_LABELS = {tax_adviser:'Tax Adviser',voice:'\u0413\u043E\u043B\u043E\u0441\u043E\u0432\u043E\u0439 \u0420\u043E\u0431\u043E\u0442',chat:'\u0418\u0418 \u0427\u0430\u0442-\u0431\u043E\u0442'};
+var state = {total:0,visionaries:0,pragmatists:0,optimizers:0,tax:0,voice:0,chat:0};
+var supabaseClient = null, isDemo = false, cursorTimer = null, anonCounter = 0;
+
+var $ = function(id){return document.getElementById(id)};
+var el = {
+  cntTotal:$('cntTotal'),cntVisionary:$('cntVisionary'),cntPragmatist:$('cntPragmatist'),cntOptimizer:$('cntOptimizer'),
+  barTax:$('barTax'),barVoice:$('barVoice'),barChat:$('barChat'),
+  pctTax:$('pctTax'),pctVoice:$('pctVoice'),pctChat:$('pctChat'),
+  donutChart:$('donutChart'),donutTotal:$('donutTotal'),
+  lgdVis:$('lgdVis'),lgdPrag:$('lgdPrag'),lgdOpt:$('lgdOpt'),
+  feedList:$('feedList'),feedCount:$('feedCount'),connStatus:$('connStatus')
+};
+
+function animateCounter(element,from,to,duration){
+  duration=duration||CONFIG.COUNTER_DURATION;
+  element.textContent=to;
+  if(from===to)return;
+  var start=performance.now();
+  function update(now){
+    var p=Math.min((now-start)/duration,1);
+    var eased=1-Math.pow(1-p,3);
+    element.textContent=Math.round(from+(to-from)*eased);
+    if(p<1)requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+function updateCounters(s){
+  var nT=s.total||0,nV=s.visionaries||0,nP=s.pragmatists||0,nO=s.optimizers||0;
+  animateCounter(el.cntTotal,state.total,nT);
+  animateCounter(el.cntVisionary,state.visionaries,nV);
+  animateCounter(el.cntPragmatist,state.pragmatists,nP);
+  animateCounter(el.cntOptimizer,state.optimizers,nO);
+  state.total=nT;state.visionaries=nV;state.pragmatists=nP;state.optimizers=nO;
+}
+
+function updateBars(s){
+  var tax=s.tax_adviser_count||0,voice=s.voice_count||0,chat=s.chat_count||0;
+  var tot=tax+voice+chat;
+  var pT=tot>0?Math.round(tax/tot*100):0;
+  var pV=tot>0?Math.round(voice/tot*100):0;
+  var pC=tot>0?100-pT-pV:0;
+  el.barTax.style.width=pT+'%';el.barVoice.style.width=pV+'%';el.barChat.style.width=pC+'%';
+  el.pctTax.textContent=pT+'%';el.pctVoice.textContent=pV+'%';el.pctChat.textContent=pC+'%';
+  state.tax=tax;state.voice=voice;state.chat=chat;
+}
+
+function updateDonut(s){
+  var vis=s.visionaries||0,prag=s.pragmatists||0,opt=s.optimizers||0;
+  var tot=vis+prag+opt;
+  var pV=tot>0?(vis/tot)*100:33.33;
+  var pP=tot>0?(prag/tot)*100:33.33;
+  var pO=tot>0?100-pV-pP:33.34;
+  var eV=pV,eP=eV+pP;
+  el.donutChart.style.background='conic-gradient(var(--primary-light) 0% '+eV+'%,var(--accent) '+eV+'% '+eP+'%,var(--indigo) '+eP+'% 100%)';
+  animateCounter(el.donutTotal,state.total,tot);
+  el.lgdVis.textContent=Math.round(pV)+'%';
+  el.lgdPrag.textContent=Math.round(pP)+'%';
+  el.lgdOpt.textContent=Math.round(pO)+'%';
+}
+
+function updateFeed(feed){
+  if(!feed||!feed.length)return;
+  var items=feed.slice(0,CONFIG.FEED_LIMIT);
+  while(el.feedList.firstChild)el.feedList.removeChild(el.feedList.firstChild);
+
+  for(var i=0;i<items.length;i++){
+    var e=items[i];
+    var row=document.createElement('div');
+    row.className='feed-item';
+    row.style.animationDelay=(i*50)+'ms';
+
+    var info=document.createElement('div');
+    info.className='feed-info';
+
+    var name=document.createElement('span');
+    var dn=e.user_name?e.user_name:'\u0410\u043D\u043E\u043D\u0438\u043C #'+(e.row_num||(++anonCounter));
+    name.textContent=e.department?dn+', '+e.department:dn;
+    info.appendChild(name);
+
+    var a1=document.createElement('span');
+    a1.className='feed-arrow';a1.textContent='\u2014';
+    info.appendChild(a1);
+
+    var tag=document.createElement('span');
+    tag.className='feed-profile-tag '+(e.profile||'');
+    tag.textContent=PROFILE_LABELS[e.profile]||e.profile||'';
+    info.appendChild(tag);
+
+    var a2=document.createElement('span');
+    a2.className='feed-arrow';a2.textContent='\u2192';
+    info.appendChild(a2);
+
+    var prod=document.createElement('span');
+    prod.className='feed-product';
+    prod.textContent=PRODUCT_LABELS[e.recommended_product]||e.recommended_product||'';
+    info.appendChild(prod);
+
+    row.appendChild(info);
+
+    var time=document.createElement('span');
+    time.className='feed-time';
+    var d=new Date(e.created_at);
+    time.textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+    row.appendChild(time);
+
+    el.feedList.appendChild(row);
+  }
+  el.feedCount.textContent='\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0435 '+items.length+' \u0437\u0430\u043F\u0438\u0441\u0435\u0439';
+}
+
+function setConnected(c){
+  el.connStatus.className='conn-status '+(c?'connected':'disconnected');
+  el.connStatus.title=c?'\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0435\u043D\u043E':'\u041E\u0442\u043A\u043B\u044E\u0447\u0435\u043D\u043E';
+}
+
+async function loadData(){
+  if(isDemo)return;
+  try{
+    var sr=await supabaseClient.from('quiz_stats').select('*').single();
+    if(sr.error)throw sr.error;
+    var fr=await supabaseClient.from('quiz_feed').select('*');
+    if(fr.error)throw fr.error;
+    updateCounters(sr.data);updateBars(sr.data);updateDonut(sr.data);updateFeed(fr.data);
+    setConnected(true);
+  }catch(err){console.warn('loadData error:',err);setConnected(false)}
+}
+
+function subscribeRealtime(){
+  if(isDemo||!supabaseClient)return;
+  supabaseClient.channel('quiz-live')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'quiz_sessions'},function(){loadData()})
+    .subscribe(function(status){
+      if(status==='SUBSCRIBED'){console.log('Realtime: connected');setConnected(true)}
+      if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){console.warn('Realtime:',status);setConnected(false)}
+    });
+}
+
+function initPresentationMode(){
+  var reset=function(){
+    document.body.classList.remove('hide-cursor');
+    clearTimeout(cursorTimer);
+    cursorTimer=setTimeout(function(){document.body.classList.add('hide-cursor')},5000);
+  };
+  document.addEventListener('mousemove',reset);
+  document.addEventListener('mousedown',reset);
+  reset();
+
+  if('wakeLock' in navigator){
+    var wl=null;
+    var req=async function(){
+      try{wl=await navigator.wakeLock.request('screen');console.log('Wake Lock active')}
+      catch(e){console.warn('Wake Lock failed:',e)}
+    };
+    req();
+    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')req()});
+  }
+}
+
+function init(){
+  var ok=CONFIG.SUPABASE_URL!=='https://hqxsoccyqrotbqlzszhe.supabase.co'&&CONFIG.SUPABASE_ANON_KEY!=='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhxeHNvY2N5cXJvdGJxbHpzemhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NDE5MDcsImV4cCI6MjA5MTExNzkwN30.qJu9vxRbSv988K8oyfKHQ23XlsRKVYak6xm-gUMPIKo';
+  if(ok&&window.supabase){
+    supabaseClient=window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_ANON_KEY);
+    isDemo=false;loadData();subscribeRealtime();
+    setInterval(loadData,CONFIG.POLL_INTERVAL);setConnected(true);
+  }else{
+    isDemo=true;console.log('Demo mode: Supabase not configured.');setConnected(false);
+    updateCounters(DEMO_STATS);updateBars(DEMO_STATS);updateDonut(DEMO_STATS);updateFeed(DEMO_FEED);
+  }
+  initPresentationMode();
+}
+
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+else init();
+})();
+</script>
+</body>
+</html>
