@@ -892,7 +892,7 @@ document.addEventListener('keydown', (e) => {
 /* ===== Flush pending submissions ===== */
 (function flushPending() {
   const pending = JSON.parse(localStorage.getItem('quiz_pending') || '[]');
-  if (!pending.length || CONFIG.EDGE_FUNCTION_URL === 'https://hqxsoccyqrotbqlzszhe.supabase.co/functions/v1/submit-quiz') return;
+  if (!pending.length || CONFIG.EDGE_FUNCTION_URL.indexOf('supabase.co') === -1) return;
   const remaining = [];
   Promise.allSettled(pending.map(p =>
     fetch(CONFIG.EDGE_FUNCTION_URL, {

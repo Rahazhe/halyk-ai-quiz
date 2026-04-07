@@ -390,7 +390,7 @@ function initPresentationMode(){
 }
 
 function init(){
-  var ok=CONFIG.SUPABASE_URL!=='https://hqxsoccyqrotbqlzszhe.supabase.co'&&CONFIG.SUPABASE_ANON_KEY!=='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhxeHNvY2N5cXJvdGJxbHpzemhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1NDE5MDcsImV4cCI6MjA5MTExNzkwN30.qJu9vxRbSv988K8oyfKHQ23XlsRKVYak6xm-gUMPIKo';
+  var ok=CONFIG.SUPABASE_URL.indexOf('supabase.co')!==-1&&CONFIG.SUPABASE_ANON_KEY.length>20;
   if(ok&&window.supabase){
     supabaseClient=window.supabase.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_ANON_KEY);
     isDemo=false;loadData();subscribeRealtime();
