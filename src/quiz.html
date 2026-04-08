@@ -676,7 +676,7 @@ function buildQuestion(q) {
   const options = getQuestionOptions(q);
   options.forEach((opt, i) => {
     const el = document.createElement('div');
-    el.className = 'option' + (answers[cur] === opt.value ? ' selected' : '');
+    el.className = 'option';
     el.dataset.value = opt.value;
 
     if (q.markers) {
