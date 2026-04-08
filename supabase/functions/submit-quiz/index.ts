@@ -1,5 +1,6 @@
 // supabase/functions/submit-quiz/index.ts
 // Saves quiz session to database (new v2 schema)
+// Supports INSERT (new record) and UPDATE (add contacts to existing record by id)
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
@@ -50,14 +51,38 @@ serve(async (req: Request) => {
   let body: Record<string, unknown>;
   try { body = await req.json(); } catch { return errorResponse('Invalid JSON body', 400); }
 
-  // Validate required fields
+  const supabaseUrl = Deno.env.get('SUPABASE_URL');
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!supabaseUrl || !supabaseKey) return errorResponse('Server configuration error', 500);
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  // ── UPDATE mode: add contacts to existing record ──────────────────────────
+  if (body.session_id) {
+    const session_id = String(body.session_id);
+    const beta_interest = body.beta_interest === true;
+    const beta_phone = beta_interest && body.beta_phone ? sanitize(String(body.beta_phone), 30) : null;
+    const beta_email = beta_interest && body.beta_email ? sanitize(String(body.beta_email), 100) : null;
+
+    const { error: updateError } = await supabase
+      .from('quiz_sessions')
+      .update({ beta_interest, beta_phone, beta_email })
+      .eq('id', session_id);
+
+    if (updateError) {
+      console.error('Supabase update error:', updateError);
+      return errorResponse('Failed to update quiz session', 500);
+    }
+
+    return new Response(JSON.stringify({ success: true }), { status: 200, headers: CORS_HEADERS });
+  }
+
+  // ── INSERT mode: new quiz record ──────────────────────────────────────────
   const { business_type, industry, company_size, priority, digital_level } = body as Record<string, string>;
   if (!business_type || !industry || !company_size || !priority || !digital_level) {
     return errorResponse('Missing required quiz answers', 400);
   }
   if (!['b2b', 'b2c'].includes(business_type)) return errorResponse('Invalid business_type', 400);
 
-  // Optional text fields
   const open_q6 = body.open_q6 ? sanitize(String(body.open_q6), 500) : null;
   const open_q7 = body.open_q7 ? sanitize(String(body.open_q7), 500) : null;
   const open_q8 = body.open_q8 ? sanitize(String(body.open_q8), 500) : null;
@@ -66,45 +91,21 @@ serve(async (req: Request) => {
   const consent = body.consent === true;
   const device = body.device === 'mobile' ? 'mobile' : 'desktop';
   const duration_ms = typeof body.duration_ms === 'number' && body.duration_ms > 0 ? Math.round(body.duration_ms) : null;
-
-  // Beta fields
-  const beta_interest = body.beta_interest === true;
-  const beta_phone = beta_interest && body.beta_phone ? sanitize(String(body.beta_phone), 30) : null;
-  const beta_email = beta_interest && body.beta_email ? sanitize(String(body.beta_email), 100) : null;
-
-  // AI recommendation data (passed from client, computed by get-recommendation)
   const top3_products = Array.isArray(body.top3_products) ? body.top3_products.slice(0, 3) : null;
   const ai_recommendation = body.ai_recommendation || null;
   const used_ai = body.used_ai === true;
 
-  // Supabase client
-  const supabaseUrl = Deno.env.get('SUPABASE_URL');
-  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-  if (!supabaseUrl || !supabaseKey) return errorResponse('Server configuration error', 500);
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
-  const { error: insertError } = await supabase.from('quiz_sessions').insert({
-    business_type,
-    industry,
-    company_size,
-    priority,
-    digital_level,
-    open_q6,
-    open_q7,
-    open_q8,
-    user_name,
-    department,
-    consent,
-    device,
-    duration_ms,
-    ip_hash: ipHash,
-    beta_interest,
-    beta_phone,
-    beta_email,
-    top3_products,
-    ai_recommendation,
-    used_ai,
-  });
+  const { data: insertData, error: insertError } = await supabase
+    .from('quiz_sessions')
+    .insert({
+      business_type, industry, company_size, priority, digital_level,
+      open_q6, open_q7, open_q8, user_name, department, consent,
+      device, duration_ms, ip_hash: ipHash,
+      beta_interest: false, beta_phone: null, beta_email: null,
+      top3_products, ai_recommendation, used_ai,
+    })
+    .select('id')
+    .single();
 
   if (insertError) {
     console.error('Supabase insert error:', insertError);
@@ -115,6 +116,7 @@ serve(async (req: Request) => {
 
   return new Response(JSON.stringify({
     success: true,
+    session_id: insertData.id,
     participant_number: count ?? 0,
   }), { status: 200, headers: CORS_HEADERS });
 });

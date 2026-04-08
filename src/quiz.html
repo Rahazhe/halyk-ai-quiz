@@ -516,6 +516,8 @@ let userData = { name: '', department: '', consent: false };
 let betaData = { interest: null, phone: '', email: '' };
 let recommendResult = null;
 let submitted = false;
+let sessionId = null;
+let participantNum = null;
 let startTime = Date.now();
 let autoTimer = null;
 
@@ -886,17 +888,17 @@ function showResults(aiData) {
   }, 100);
 
   document.getElementById('btnFinish').addEventListener('click', () => {
-    betaData.interest = true;
     betaData.phone = document.getElementById('contactPhone').value.trim();
     betaData.email = document.getElementById('contactEmail').value.trim();
-    doFinalSubmit(top3);
+    const hasContacts = !!(betaData.phone || betaData.email);
+    submitContacts(hasContacts);
   });
 
   document.getElementById('btnSkipContacts').addEventListener('click', () => {
-    betaData.interest = false;
-    doFinalSubmit(top3);
+    submitContacts(false);
   });
 
+  autoSubmit(top3);
   launchConfetti();
 }
 
@@ -949,31 +951,28 @@ function showBeta(top3) {
   });
 }
 
-/* ===== FINAL SUBMIT ===== */
-function doFinalSubmit(top3) {
-  if (submitted) { goToThanks(); return; }
+/* ===== AUTO SUBMIT (fires when results appear) ===== */
+function autoSubmit(top3) {
+  if (submitted) return;
   submitted = true;
 
   const payload = {
-    business_type:    answers[0],
-    industry:         answers[1],
-    company_size:     answers[2],
-    priority:         answers[3],
-    digital_level:    answers[4],
-    open_q6:          openAnswers.q6,
-    open_q7:          openAnswers.q7,
-    open_q8:          openAnswers.q8,
-    user_name:        userData.name,
-    department:       userData.department,
-    consent:          userData.consent,
-    top3_products:    top3,
+    business_type:     answers[0],
+    industry:          answers[1],
+    company_size:      answers[2],
+    priority:          answers[3],
+    digital_level:     answers[4],
+    open_q6:           openAnswers.q6,
+    open_q7:           openAnswers.q7,
+    open_q8:           openAnswers.q8,
+    user_name:         userData.name,
+    department:        userData.department,
+    consent:           userData.consent,
+    top3_products:     top3,
     ai_recommendation: recommendResult ? (recommendResult.ai_products || null) : null,
-    used_ai:          recommendResult ? (recommendResult.used_ai || false) : false,
-    beta_interest:    betaData.interest,
-    beta_phone:       betaData.phone,
-    beta_email:       betaData.email,
-    device:           /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
-    duration_ms:      Date.now() - startTime,
+    used_ai:           recommendResult ? (recommendResult.used_ai || false) : false,
+    device:            /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+    duration_ms:       Date.now() - startTime,
   };
 
   fetch(CONFIG.SUBMIT_URL, {
@@ -982,8 +981,29 @@ function doFinalSubmit(top3) {
     body: JSON.stringify(payload),
   })
     .then(r => r.ok ? r.json() : Promise.reject(r.status))
-    .then(data => goToThanks(data && data.participant_number))
-    .catch(() => goToThanks());
+    .then(data => {
+      sessionId = data.session_id || null;
+      participantNum = data.participant_number || null;
+    })
+    .catch(() => {});
+}
+
+/* ===== SUBMIT CONTACTS (fires on "Завершить") ===== */
+function submitContacts(hasContacts) {
+  if (!hasContacts || !sessionId) { goToThanks(participantNum); return; }
+
+  fetch(CONFIG.SUBMIT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      session_id:    sessionId,
+      beta_interest: true,
+      beta_phone:    betaData.phone,
+      beta_email:    betaData.email,
+    }),
+  })
+    .then(() => goToThanks(participantNum))
+    .catch(() => goToThanks(participantNum));
 }
 
 /* ===== THANKS ===== */
@@ -1020,6 +1040,8 @@ function resetAll() {
   betaData = { interest: null, phone: '', email: '' };
   recommendResult = null;
   submitted = false;
+  sessionId = null;
+  participantNum = null;
   startTime = Date.now();
   document.getElementById('userName').value = '';
   document.getElementById('consentCheck').checked = false;
