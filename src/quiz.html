@@ -105,7 +105,8 @@ h1,h2,h3,h4{letter-spacing:-0.01em}
 .q-text{font-size:21px;font-weight:700;color:var(--text-white);line-height:1.4;margin-bottom:28px}
 
 .options{display:flex;flex-direction:column;gap:10px}
-.option{display:flex;align-items:center;gap:14px;padding:16px 18px;background:rgba(255,255,255,.03);border:2px solid rgba(255,255,255,.08);border-radius:14px;cursor:pointer;transition:all .25s;font-size:15px;line-height:1.4;color:#D1D5DB;user-select:none;-webkit-tap-highlight-color:transparent;min-height:56px}
+.option{display:flex;align-items:center;gap:14px;padding:16px 18px;background:rgba(255,255,255,.03);border:2px solid rgba(255,255,255,.08);border-radius:14px;cursor:pointer;transition:all .25s;font-size:15px;line-height:1.4;color:#D1D5DB;user-select:none;-webkit-tap-highlight-color:transparent;min-height:56px;outline:none}
+.option:focus,.option:focus-visible{outline:none}
 .option:hover{border-color:var(--border-hover);background:rgba(6,140,110,.08);transform:translateX(4px)}
 .option.selected{border-color:var(--primary);background:rgba(6,140,110,.12);color:var(--text-white)}
 .option-marker{width:36px;height:36px;min-width:36px;border-radius:10px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--text-dim);transition:all .25s}
@@ -678,6 +679,7 @@ function buildQuestion(q) {
     const el = document.createElement('div');
     el.className = 'option';
     el.dataset.value = opt.value;
+    el.setAttribute('tabindex', '-1');
 
     if (q.markers) {
       const marker = document.createElement('div');
