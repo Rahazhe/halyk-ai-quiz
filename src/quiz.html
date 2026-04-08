@@ -784,7 +784,8 @@ function startLoadingAndRecommend() {
       recommendResult = data;
       setTimeout(() => showResults(data), 1800);
     })
-    .catch(() => {
+    .catch((err) => {
+      console.warn('get-recommendation failed:', err);
       recommendResult = null;
       setTimeout(() => showResults(null), 1800);
     });
@@ -844,19 +845,25 @@ function showResults(aiData) {
       </div>`;
   });
 
-  const summaryHtml = aiData && aiData.summary
-    ? `<div style="margin-top:16px;padding:16px 20px;background:rgba(255,255,255,.03);border-radius:var(--radius-md);font-size:14px;color:var(--text-muted);line-height:1.7;font-style:italic">${aiData.summary}</div>`
+  const personalInsight = aiData && aiData.personal_insight ? aiData.personal_insight : null;
+  const usedAI = aiData && aiData.used_ai;
+
+  const insightHtml = personalInsight
+    ? `<div style="margin-bottom:28px;padding:20px 24px;background:linear-gradient(135deg,rgba(6,140,110,0.12),rgba(249,176,0,0.08));border:1px solid rgba(6,140,110,0.25);border-radius:var(--radius-lg)">
+        <div style="font-size:12px;font-weight:700;color:var(--primary-light);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">✨ AI-рекомендация</div>
+        <div style="font-size:15px;color:var(--text-light);line-height:1.7">${personalInsight}</div>
+       </div>`
     : '';
 
   const html = `
     <div class="results-head">
       <div class="emoji">🎯</div>
-      <h2>Ваши топ-3 продукта Халык Банка</h2>
-      <p>На основе вашего профиля и AI-анализа</p>
+      <h2>Ваш персональный анализ</h2>
+      <p>На основе ваших ответов и AI-анализа${usedAI ? ' <span style="color:var(--primary-light)">✓</span>' : ''}</p>
     </div>
-    <div class="section-label">Рекомендации</div>
+    ${insightHtml}
+    <div class="section-label">Топ-3 продукта Халык Банка</div>
     ${cards}
-    ${summaryHtml}
     <div class="ai-trend-box">
       <div class="ai-trend-label">📊 Тренд отрасли</div>
       <div class="ai-trend-text">${trend}</div>
