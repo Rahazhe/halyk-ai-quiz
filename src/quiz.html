@@ -258,7 +258,21 @@ textarea.form-input{resize:none;line-height:1.5;min-height:90px}
   <div id="s-landing" class="screen landing active">
     <div class="landing-badge"><span class="pulse-dot"></span>AI Demo Day 2026</div>
     <h1>Ваши <span class="grad">продукты</span><br>Halyk Bank</h1>
-    <p class="sub">5 вопросов о вашем бизнесе — и AI подберёт топ-3 продукта Халык Банка именно для вас</p>
+    <p class="sub">Пройдите короткий квиз — и AI Halyk Bank подберёт топ‑3 банковских продукта именно для вашего бизнеса</p>
+    <div style="margin:0 auto 32px;max-width:420px;text-align:left;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-md)">
+        <span style="font-size:20px;line-height:1">📋</span>
+        <div><div style="font-size:14px;font-weight:700;color:var(--text-white);margin-bottom:2px">5 вопросов о вашем бизнесе</div><div style="font-size:13px;color:var(--text-dim)">Тип клиентов, отрасль, размер компании, приоритеты и digital-готовность</div></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-md)">
+        <span style="font-size:20px;line-height:1">🤖</span>
+        <div><div style="font-size:14px;font-weight:700;color:var(--text-white);margin-bottom:2px">AI анализирует ваш профиль</div><div style="font-size:13px;color:var(--text-dim)">GPT-4 подбирает продукты и даёт персональный совет под ваши задачи</div></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius-md)">
+        <span style="font-size:20px;line-height:1">💼</span>
+        <div><div style="font-size:14px;font-weight:700;color:var(--text-white);margin-bottom:2px">Получите топ-3 рекомендации</div><div style="font-size:13px;color:var(--text-dim)">Конкретные продукты Халык Банка с объяснением, почему они подходят именно вам</div></div>
+      </div>
+    </div>
     <div class="stats-row">
       <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">вопросов</div></div>
       <div class="stat-item"><div class="stat-num">2</div><div class="stat-label">минуты</div></div>
@@ -869,8 +883,17 @@ function showResults(aiData) {
       <div class="ai-trend-text">${trend}</div>
     </div>
     <span class="stand-cta">→ Узнайте больше у менеджера на стенде</span>
-    <div style="margin-top:28px;text-align:center">
+    <div style="margin-top:32px;padding:24px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-lg)">
+      <div style="font-size:15px;font-weight:700;color:var(--text-white);margin-bottom:6px">Хотите узнать больше?</div>
+      <div style="font-size:14px;color:var(--text-dim);margin-bottom:20px;line-height:1.6">Оставьте ваши контакты — и мы сможем детальнее ответить на ваши вопросы</div>
+      <div class="form-group" style="margin-bottom:14px">
+        <input type="tel" id="contactPhone" class="form-input" placeholder="Телефон: +7 700 000 00 00" autocomplete="tel">
+      </div>
+      <div class="form-group" style="margin-bottom:20px">
+        <input type="email" id="contactEmail" class="form-input" placeholder="E-mail: you@company.kz" autocomplete="email">
+      </div>
       <button class="btn-primary" id="btnFinish" style="width:100%;justify-content:center">Завершить</button>
+      <button class="btn-outline" id="btnSkipContacts" style="width:100%;justify-content:center;margin-top:10px">Пропустить</button>
     </div>`;
 
   const screen = document.getElementById('s-results');
@@ -890,7 +913,15 @@ function showResults(aiData) {
   }, 100);
 
   document.getElementById('btnFinish').addEventListener('click', () => {
-    showBeta(top3);
+    betaData.interest = true;
+    betaData.phone = document.getElementById('contactPhone').value.trim();
+    betaData.email = document.getElementById('contactEmail').value.trim();
+    doFinalSubmit(top3);
+  });
+
+  document.getElementById('btnSkipContacts').addEventListener('click', () => {
+    betaData.interest = false;
+    doFinalSubmit(top3);
   });
 
   launchConfetti();
@@ -1018,7 +1049,6 @@ function resetAll() {
   submitted = false;
   startTime = Date.now();
   document.getElementById('userName').value = '';
-  document.getElementById('userDept').value = '';
   document.getElementById('consentCheck').checked = false;
   document.getElementById('consentErr').style.display = 'none';
   document.getElementById('openQ6').value = '';
