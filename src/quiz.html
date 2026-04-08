@@ -217,10 +217,7 @@ h1,h2,h3,h4{letter-spacing:-0.01em}
 .step-check{opacity:0;transition:opacity .3s}
 .loading-step.done .step-check{opacity:1}
 
-/* ===== AI trend box ===== */
-.ai-trend-box{background:linear-gradient(135deg,rgba(6,140,110,.12),rgba(249,176,0,.08));border:1px solid rgba(6,140,110,.3);border-radius:var(--radius-lg);padding:20px 24px;margin-top:20px}
-.ai-trend-label{font-size:11px;font-weight:700;color:var(--primary-light);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
-.ai-trend-text{font-size:15px;font-weight:600;color:var(--text-white);line-height:1.5}
+
 .stand-cta{font-size:14px;font-weight:700;color:var(--accent);margin-top:16px;display:block}
 
 /* ===== AI product reason ===== */
@@ -455,27 +452,6 @@ const Q5_MODS = {
   offline:     { acquiring: 10, rko: 5, online_duken: -5, halyk_market: -5 },
 };
 
-const AI_TRENDS = {
-  'Кофейни, кафе, рестораны':              '79% ресторанов уже внедряют или рассматривают AI-решения (Popmenu, 2024)',
-  'Продуктовые магазины':                  '97% ритейлеров планируют увеличить инвестиции в AI в ближайший год',
-  'Одежда и обувь':                        'AI-персонализация способна увеличить конверсию до 30% в fashion-сегменте',
-  'Сельское хозяйство':                    'Рынок AI в агросекторе растёт на 25–26% ежегодно (GrandView Research)',
-  'Оптовая торговля':                      'AI сокращает логистические затраты на 5–20% (McKinsey)',
-  'Транспорт и логистика':                 'AI сокращает логистические затраты на 5–20% (McKinsey)',
-  'Прочие строит. работы':                 'Рынок AI в строительстве вырастет с $3.7 млрд (2024) до $22+ млрд к 2030',
-  'Производственное строительство':        'Рынок AI в строительстве вырастет с $3.7 млрд (2024) до $22+ млрд к 2030',
-  'Лёгкая и обрабатывающая промышленность': 'AI-проекты в производстве окупаются в среднем за 12–18 месяцев',
-  'Предоставление услуг':                  '89% компаний активно используют или тестируют AI-решения',
-  'Гос. органы, образование, здравоохр.':  '80% предприятий будут использовать GenAI в production к 2026 (Gartner)',
-  'Операции с недвижимостью':              'AI способен автоматизировать значительную часть рутинных задач в недвижимости',
-  'АЗС':                                   'AI-оптимизация помогает снижать операционные затраты в топливном ритейле',
-  'Электроника':                           'AI-рекомендации способны увеличивать средний чек в электронике',
-  'Аптеки и Оптика':                       'AI улучшает точность прогнозирования спроса в фармацевтике',
-  'Мед центры':                            'AI помогает ускорять обработку медицинских данных и маршрутизацию пациентов',
-  'Строительные товары':                   'AI-прогнозирование помогает оптимизировать складские запасы',
-  'Гостиницы, мотели':                     'AI-персонализация повышает лояльность гостей и загрузку отелей',
-  'Розничная торговля (прочее)':           'AI-персонализация способна увеличить конверсию на 20–35% в рознице',
-};
 
 /* MCQ questions definition (Q1–Q5). Q2 options are rendered dynamically. */
 const QUESTIONS = [
@@ -825,8 +801,6 @@ function showResults(aiData) {
   const q5       = answers[4];
   const top3     = computeTop3(bType, industry, q3, q4, q5);
 
-  const trend = AI_TRENDS[industry] || 'AI трансформирует бизнес во всех отраслях';
-
   const aiProducts = aiData && aiData.ai_products ? aiData.ai_products : [];
 
   const rankLabels  = ['#1', '#2', '#3'];
@@ -880,10 +854,6 @@ function showResults(aiData) {
     ${aiAnswerHtml}
     <div class="section-label">Топ-3 продукта Халык Банка</div>
     ${cards}
-    <div class="ai-trend-box">
-      <div class="ai-trend-label">📊 Тренд отрасли</div>
-      <div class="ai-trend-text">${trend}</div>
-    </div>
     <span class="stand-cta">→ Узнайте больше у менеджера на стенде</span>
     <div style="margin-top:32px;padding:24px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius-lg)">
       <div style="font-size:15px;font-weight:700;color:var(--text-white);margin-bottom:6px">Хотите узнать больше?</div>
