@@ -126,43 +126,43 @@ body.hide-cursor,body.hide-cursor *{cursor:none!important}
       <div class="counter-label">Всего участников</div>
     </div>
     <div class="counter-card visionary">
-      <div class="counter-num" id="cntVisionary">0</div>
-      <div class="counter-label">Визионеры</div>
+      <div class="counter-num" id="cntB2B">0</div>
+      <div class="counter-label">B2B / Госсектор</div>
     </div>
     <div class="counter-card pragmatist">
-      <div class="counter-num" id="cntPragmatist">0</div>
-      <div class="counter-label">Прагматики</div>
+      <div class="counter-num" id="cntB2C">0</div>
+      <div class="counter-label">B2C / Розница</div>
     </div>
     <div class="counter-card optimizer">
-      <div class="counter-num" id="cntOptimizer">0</div>
-      <div class="counter-label">Оптимизаторы</div>
+      <div class="counter-num" id="cntAI">0</div>
+      <div class="counter-label">AI-рекомендаций</div>
     </div>
   </div>
 
   <!-- Charts -->
   <div class="charts">
     <div class="chart-panel">
-      <div class="chart-title">Распределение продуктов</div>
+      <div class="chart-title">Тип бизнеса и охват</div>
       <div class="bar-chart">
         <div class="bar-row">
-          <span class="bar-label">AI Tax Adviser</span>
-          <div class="bar-track"><div class="bar-fill tax" id="barTax" style="width:0%"></div></div>
-          <span class="bar-pct" id="pctTax">0%</span>
+          <span class="bar-label">B2B / Госсектор</span>
+          <div class="bar-track"><div class="bar-fill tax" id="barB2B" style="width:0%"></div></div>
+          <span class="bar-pct" id="pctB2B">0%</span>
         </div>
         <div class="bar-row">
-          <span class="bar-label">Голосовой Робот</span>
-          <div class="bar-track"><div class="bar-fill voice" id="barVoice" style="width:0%"></div></div>
-          <span class="bar-pct" id="pctVoice">0%</span>
+          <span class="bar-label">B2C / Розница</span>
+          <div class="bar-track"><div class="bar-fill voice" id="barB2C" style="width:0%"></div></div>
+          <span class="bar-pct" id="pctB2C">0%</span>
         </div>
         <div class="bar-row">
-          <span class="bar-label">ИИ Чат-бот</span>
-          <div class="bar-track"><div class="bar-fill chat" id="barChat" style="width:0%"></div></div>
-          <span class="bar-pct" id="pctChat">0%</span>
+          <span class="bar-label">С именем</span>
+          <div class="bar-track"><div class="bar-fill chat" id="barIdent" style="width:0%"></div></div>
+          <span class="bar-pct" id="pctIdent">0%</span>
         </div>
       </div>
     </div>
     <div class="chart-panel">
-      <div class="chart-title">Профили участников</div>
+      <div class="chart-title">AI vs Матрица</div>
       <div class="donut-container">
         <div class="donut-wrapper">
           <div class="donut" id="donutChart"></div>
@@ -174,18 +174,18 @@ body.hide-cursor,body.hide-cursor *{cursor:none!important}
         <div class="donut-legend">
           <div class="legend-item">
             <span class="legend-dot vis"></span>
-            <span class="legend-text">Визионеры</span>
-            <span class="legend-pct" id="lgdVis">0%</span>
+            <span class="legend-text">AI-рекомендация</span>
+            <span class="legend-pct" id="lgdAI">0%</span>
           </div>
           <div class="legend-item">
             <span class="legend-dot prag"></span>
-            <span class="legend-text">Прагматики</span>
-            <span class="legend-pct" id="lgdPrag">0%</span>
+            <span class="legend-text">Матрица (fallback)</span>
+            <span class="legend-pct" id="lgdMatrix">0%</span>
           </div>
           <div class="legend-item">
             <span class="legend-dot opt"></span>
-            <span class="legend-text">Оптимизаторы</span>
-            <span class="legend-pct" id="lgdOpt">0%</span>
+            <span class="legend-text">Бета-тестирование</span>
+            <span class="legend-pct" id="lgdBeta">0</span>
           </div>
         </div>
       </div>
@@ -212,35 +212,34 @@ var CONFIG = {
 };
 
 var DEMO_STATS = {
-  total:247,visionaries:89,pragmatists:112,optimizers:46,
-  tax_adviser_count:111,voice_count:79,chat_count:57
+  total:47, b2b_count:28, b2c_count:19, ai_used_count:39, beta_count:8, identified_count:21
 };
 var DEMO_FEED = [
-  {user_name:'Арман',department:'IT',profile:'visionary',recommended_product:'tax_adviser',created_at:'2026-04-06T14:32:00Z'},
-  {user_name:null,department:null,profile:'pragmatist',recommended_product:'chat',created_at:'2026-04-06T14:30:00Z',row_num:45},
-  {user_name:'Динара',department:'HR',profile:'optimizer',recommended_product:'voice',created_at:'2026-04-06T14:28:00Z'},
-  {user_name:'Бауыржан',department:'Розница',profile:'visionary',recommended_product:'tax_adviser',created_at:'2026-04-06T14:25:00Z'},
-  {user_name:null,department:null,profile:'pragmatist',recommended_product:'voice',created_at:'2026-04-06T14:23:00Z',row_num:43},
-  {user_name:'Айгуль',department:'Маркетинг',profile:'visionary',recommended_product:'chat',created_at:'2026-04-06T14:20:00Z'},
-  {user_name:'Марат',department:'Финансы',profile:'optimizer',recommended_product:'tax_adviser',created_at:'2026-04-06T14:18:00Z'},
-  {user_name:null,department:null,profile:'visionary',recommended_product:'voice',created_at:'2026-04-06T14:15:00Z',row_num:41},
-  {user_name:'Нурлан',department:'IT',profile:'pragmatist',recommended_product:'tax_adviser',created_at:'2026-04-06T14:12:00Z'},
-  {user_name:'Сауле',department:'Комплаенс',profile:'optimizer',recommended_product:'chat',created_at:'2026-04-06T14:10:00Z'}
+  {id:'a1b2c3d4-0000-0000-0000-000000000001',display_name:'Арман',department:'IT',industry:'Оптовая торговля',business_type:'b2b',top3_products:['rko','ved','credit'],used_ai:true,created_at:'2026-04-08T09:32:00Z'},
+  {id:'a1b2c3d4-0000-0000-0000-000000000002',display_name:'Аноним',department:null,industry:'Кофейни, кафе, рестораны',business_type:'b2c',top3_products:['acquiring','restaurants','tax_adviser'],used_ai:true,created_at:'2026-04-08T09:30:00Z'},
+  {id:'a1b2c3d4-0000-0000-0000-000000000003',display_name:'Динара',department:'Финансы',industry:'Продуктовые магазины',business_type:'b2c',top3_products:['acquiring','online_duken','halyk_market'],used_ai:false,created_at:'2026-04-08T09:28:00Z'},
+  {id:'a1b2c3d4-0000-0000-0000-000000000004',display_name:'Аноним',department:null,industry:'Транспорт и логистика',business_type:'b2b',top3_products:['rko','credit','salary'],used_ai:true,created_at:'2026-04-08T09:25:00Z'},
+  {id:'a1b2c3d4-0000-0000-0000-000000000005',display_name:'Марат',department:'Логистика',industry:'Сельское хозяйство',business_type:'b2b',top3_products:['credit','deposit','rko'],used_ai:true,created_at:'2026-04-08T09:22:00Z'}
 ];
 
-var PROFILE_LABELS = {visionary:'\u0412\u0438\u0437\u0438\u043E\u043D\u0435\u0440',pragmatist:'\u041F\u0440\u0430\u0433\u043C\u0430\u0442\u0438\u043A',optimizer:'\u041E\u043F\u0442\u0438\u043C\u0438\u0437\u0430\u0442\u043E\u0440'};
-var PRODUCT_LABELS = {tax_adviser:'Tax Adviser',voice:'\u0413\u043E\u043B\u043E\u0441\u043E\u0432\u043E\u0439 \u0420\u043E\u0431\u043E\u0442',chat:'\u0418\u0418 \u0427\u0430\u0442-\u0431\u043E\u0442'};
-var state = {total:0,visionaries:0,pragmatists:0,optimizers:0,tax:0,voice:0,chat:0};
-var supabaseClient = null, isDemo = false, cursorTimer = null, anonCounter = 0;
+var PRODUCT_SHORT = {
+  acquiring:'Эквайринг', rko:'РКО', credit:'Кредит', salary:'Зарплатный',
+  online_duken:'OnlineDuken', deposit:'Депозит', guarantees:'Гарантии',
+  dealing:'Дилинг', mercury:'Mercury X', ved:'ВЭД', halyk_market:'H.Market',
+  restaurants:'Х-рестораны', tax_adviser:'Tax Adviser'
+};
+
+var state = {total:0, b2b:0, b2c:0, ai:0};
+var supabaseClient = null, isDemo = false, cursorTimer = null;
 
 var $ = function(id){return document.getElementById(id)};
 var el = {
-  cntTotal:$('cntTotal'),cntVisionary:$('cntVisionary'),cntPragmatist:$('cntPragmatist'),cntOptimizer:$('cntOptimizer'),
-  barTax:$('barTax'),barVoice:$('barVoice'),barChat:$('barChat'),
-  pctTax:$('pctTax'),pctVoice:$('pctVoice'),pctChat:$('pctChat'),
-  donutChart:$('donutChart'),donutTotal:$('donutTotal'),
-  lgdVis:$('lgdVis'),lgdPrag:$('lgdPrag'),lgdOpt:$('lgdOpt'),
-  feedList:$('feedList'),feedCount:$('feedCount'),connStatus:$('connStatus')
+  cntTotal:$('cntTotal'), cntB2B:$('cntB2B'), cntB2C:$('cntB2C'), cntAI:$('cntAI'),
+  barB2B:$('barB2B'), barB2C:$('barB2C'), barIdent:$('barIdent'),
+  pctB2B:$('pctB2B'), pctB2C:$('pctB2C'), pctIdent:$('pctIdent'),
+  donutChart:$('donutChart'), donutTotal:$('donutTotal'),
+  lgdAI:$('lgdAI'), lgdMatrix:$('lgdMatrix'), lgdBeta:$('lgdBeta'),
+  feedList:$('feedList'), feedCount:$('feedCount'), connStatus:$('connStatus')
 };
 
 function animateCounter(element,from,to,duration){
@@ -258,37 +257,33 @@ function animateCounter(element,from,to,duration){
 }
 
 function updateCounters(s){
-  var nT=s.total||0,nV=s.visionaries||0,nP=s.pragmatists||0,nO=s.optimizers||0;
+  var nT=s.total||0, nB2B=s.b2b_count||0, nB2C=s.b2c_count||0, nAI=s.ai_used_count||0;
   animateCounter(el.cntTotal,state.total,nT);
-  animateCounter(el.cntVisionary,state.visionaries,nV);
-  animateCounter(el.cntPragmatist,state.pragmatists,nP);
-  animateCounter(el.cntOptimizer,state.optimizers,nO);
-  state.total=nT;state.visionaries=nV;state.pragmatists=nP;state.optimizers=nO;
+  animateCounter(el.cntB2B,state.b2b,nB2B);
+  animateCounter(el.cntB2C,state.b2c,nB2C);
+  animateCounter(el.cntAI,state.ai,nAI);
+  state.total=nT; state.b2b=nB2B; state.b2c=nB2C; state.ai=nAI;
 }
 
 function updateBars(s){
-  var tax=s.tax_adviser_count||0,voice=s.voice_count||0,chat=s.chat_count||0;
-  var tot=tax+voice+chat;
-  var pT=tot>0?Math.round(tax/tot*100):0;
-  var pV=tot>0?Math.round(voice/tot*100):0;
-  var pC=tot>0?100-pT-pV:0;
-  el.barTax.style.width=pT+'%';el.barVoice.style.width=pV+'%';el.barChat.style.width=pC+'%';
-  el.pctTax.textContent=pT+'%';el.pctVoice.textContent=pV+'%';el.pctChat.textContent=pC+'%';
-  state.tax=tax;state.voice=voice;state.chat=chat;
+  var tot=s.total||0, b2b=s.b2b_count||0, b2c=s.b2c_count||0, ident=s.identified_count||0;
+  var pB2B=tot>0?Math.round(b2b/tot*100):0;
+  var pB2C=tot>0?Math.round(b2c/tot*100):0;
+  var pId=tot>0?Math.round(ident/tot*100):0;
+  el.barB2B.style.width=pB2B+'%'; el.barB2C.style.width=pB2C+'%'; el.barIdent.style.width=pId+'%';
+  el.pctB2B.textContent=pB2B+'%'; el.pctB2C.textContent=pB2C+'%'; el.pctIdent.textContent=pId+'%';
 }
 
 function updateDonut(s){
-  var vis=s.visionaries||0,prag=s.pragmatists||0,opt=s.optimizers||0;
-  var tot=vis+prag+opt;
-  var pV=tot>0?(vis/tot)*100:33.33;
-  var pP=tot>0?(prag/tot)*100:33.33;
-  var pO=tot>0?100-pV-pP:33.34;
-  var eV=pV,eP=eV+pP;
-  el.donutChart.style.background='conic-gradient(var(--primary-light) 0% '+eV+'%,var(--accent) '+eV+'% '+eP+'%,var(--indigo) '+eP+'% 100%)';
+  var tot=s.total||0, ai=s.ai_used_count||0, beta=s.beta_count||0;
+  var matrix=tot-ai;
+  var pAI=tot>0?(ai/tot)*100:50;
+  var pMat=tot>0?(matrix/tot)*100:50;
+  el.donutChart.style.background='conic-gradient(var(--primary-light) 0% '+pAI+'%,var(--accent) '+pAI+'% 100%)';
   animateCounter(el.donutTotal,state.total,tot);
-  el.lgdVis.textContent=Math.round(pV)+'%';
-  el.lgdPrag.textContent=Math.round(pP)+'%';
-  el.lgdOpt.textContent=Math.round(pO)+'%';
+  el.lgdAI.textContent=Math.round(pAI)+'%';
+  el.lgdMatrix.textContent=Math.round(pMat)+'%';
+  el.lgdBeta.textContent=beta;
 }
 
 function updateFeed(feed){
@@ -305,31 +300,44 @@ function updateFeed(feed){
     var info=document.createElement('div');
     info.className='feed-info';
 
+    // Name
     var name=document.createElement('span');
-    var stableNum=parseInt(e.id.replace(/-/g,'').slice(-5),16)%1000;
-    var rawName=e.display_name||e.user_name||'';
-    var isAnon=!rawName||rawName==='\u0410\u043D\u043E\u043D\u0438\u043C';
-    var dn=isAnon?'\u0410\u043D\u043E\u043D\u0438\u043C #'+stableNum:rawName;
+    var stableNum=parseInt((e.id||'').replace(/-/g,'').slice(-5)||'0',16)%1000;
+    var rawName=e.display_name||'';
+    var isAnon=!rawName||rawName==='Аноним';
+    var dn=isAnon?'Аноним #'+stableNum:rawName;
     name.textContent=e.department?dn+', '+e.department:dn;
     info.appendChild(name);
 
     var a1=document.createElement('span');
-    a1.className='feed-arrow';a1.textContent='\u2014';
+    a1.className='feed-arrow';a1.textContent='—';
     info.appendChild(a1);
 
-    var tag=document.createElement('span');
-    tag.className='feed-profile-tag '+(e.profile||'');
-    tag.textContent=PROFILE_LABELS[e.profile]||e.profile||'';
-    info.appendChild(tag);
+    // Industry
+    var ind=document.createElement('span');
+    ind.className='feed-profile-tag '+(e.business_type||'');
+    ind.style.cssText='background:rgba(6,140,110,0.15);color:#0AAE8A;font-size:11px;padding:2px 8px;border-radius:20px';
+    ind.textContent=e.industry||(e.business_type==='b2b'?'B2B':'B2C');
+    info.appendChild(ind);
 
-    var a2=document.createElement('span');
-    a2.className='feed-arrow';a2.textContent='\u2192';
-    info.appendChild(a2);
+    // Top products
+    if(e.top3_products&&e.top3_products.length){
+      var a2=document.createElement('span');
+      a2.className='feed-arrow';a2.textContent='→';
+      info.appendChild(a2);
+      var prod=document.createElement('span');
+      prod.className='feed-product';
+      prod.textContent=e.top3_products.slice(0,2).map(function(k){return PRODUCT_SHORT[k]||k;}).join(', ');
+      info.appendChild(prod);
+    }
 
-    var prod=document.createElement('span');
-    prod.className='feed-product';
-    prod.textContent=PRODUCT_LABELS[e.recommended_product]||e.recommended_product||'';
-    info.appendChild(prod);
+    // AI badge
+    if(e.used_ai){
+      var aiBadge=document.createElement('span');
+      aiBadge.style.cssText='font-size:10px;background:rgba(249,176,0,0.15);color:#F9B000;padding:2px 6px;border-radius:10px;margin-left:4px;font-weight:700';
+      aiBadge.textContent='AI';
+      info.appendChild(aiBadge);
+    }
 
     row.appendChild(info);
 
@@ -341,7 +349,7 @@ function updateFeed(feed){
 
     el.feedList.appendChild(row);
   }
-  el.feedCount.textContent='\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0435 '+items.length+' \u0437\u0430\u043F\u0438\u0441\u0435\u0439';
+  el.feedCount.textContent='Последние '+items.length+' записей';
 }
 
 function setConnected(c){

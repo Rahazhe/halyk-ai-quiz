@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Halyk AI Quiz — Demo Day 2026</title>
-<meta name="description" content="7 вопросов — и мы определим ваш ИИ-профиль и подходящие решения Halyk Bank">
+<meta name="description" content="5 вопросов — и мы подберём продукты Halyk Bank для вашего бизнеса">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -199,6 +199,55 @@ h1,h2,h3,h4{letter-spacing:-0.01em}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+
+/* ===== 2-column grid for Q2 industry options ===== */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.options-grid .option{padding:12px 14px;font-size:13px;min-height:52px}
+.options-grid .option-marker{display:none}
+
+/* ===== Loading screen ===== */
+.loading-screen{text-align:center;padding:60px 0}
+.loading-spinner{width:60px;height:60px;border:3px solid rgba(255,255,255,.08);border-top-color:#0AAE8A;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 28px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-steps{display:flex;flex-direction:column;gap:12px;margin-top:24px}
+.loading-step{font-size:14px;color:var(--text-dim);transition:all .4s;display:flex;align-items:center;gap:8px;justify-content:center}
+.loading-step.active{color:var(--primary-light);font-weight:600}
+.loading-step.done{color:var(--text-muted)}
+.step-check{opacity:0;transition:opacity .3s}
+.loading-step.done .step-check{opacity:1}
+
+/* ===== AI trend box ===== */
+.ai-trend-box{background:linear-gradient(135deg,rgba(6,140,110,.12),rgba(249,176,0,.08));border:1px solid rgba(6,140,110,.3);border-radius:var(--radius-lg);padding:20px 24px;margin-top:20px}
+.ai-trend-label{font-size:11px;font-weight:700;color:var(--primary-light);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.ai-trend-text{font-size:15px;font-weight:600;color:var(--text-white);line-height:1.5}
+.stand-cta{font-size:14px;font-weight:700;color:var(--accent);margin-top:16px;display:block}
+
+/* ===== AI product reason ===== */
+.product-reason{margin-top:10px;font-size:13px;color:var(--primary-light);line-height:1.5;font-style:italic;padding-left:12px;border-left:2px solid rgba(10,174,138,.4)}
+
+/* ===== Open questions textarea ===== */
+textarea.form-input{resize:none;line-height:1.5;min-height:90px}
+
+/* ===== Open questions screen ===== */
+.open-screen{max-width:540px;margin:0 auto;width:100%}
+.open-screen h2{font-size:24px;font-weight:800;color:var(--text-white);margin-bottom:8px}
+.open-screen .open-sub{font-size:14px;color:var(--text-dim);margin-bottom:28px;line-height:1.6}
+.open-q-label{font-size:15px;font-weight:700;color:var(--text-white);margin-bottom:10px;line-height:1.4}
+.open-optional{font-size:12px;color:var(--text-dark);font-weight:400;margin-left:6px}
+.open-btns{display:flex;gap:12px;margin-top:28px}
+.open-btns .btn-primary{flex:2;justify-content:center;padding:16px 20px;font-size:15px}
+.open-btns .btn-outline{flex:1;justify-content:center;padding:16px 20px;font-size:15px}
+
+/* ===== Beta screen ===== */
+.beta-screen{max-width:480px;margin:0 auto;width:100%;text-align:center}
+.beta-screen h2{font-size:26px;font-weight:800;color:var(--text-white);margin-bottom:12px}
+.beta-screen .beta-sub{font-size:15px;color:var(--text-muted);line-height:1.6;margin-bottom:32px}
+.beta-choices{display:flex;gap:12px;justify-content:center;margin-bottom:28px}
+.beta-choice{flex:1;max-width:200px;padding:20px 16px;background:rgba(255,255,255,.03);border:2px solid rgba(255,255,255,.08);border-radius:var(--radius-lg);cursor:pointer;transition:all .25s;font-size:15px;font-weight:700;color:var(--text-muted);font-family:inherit}
+.beta-choice:hover{border-color:var(--border-hover);color:var(--text-white);background:rgba(6,140,110,.06)}
+.beta-choice.selected{border-color:var(--primary);background:rgba(6,140,110,.12);color:var(--text-white)}
+.beta-form{display:none;text-align:left}
+.beta-form.show{display:block}
 </style>
 </head>
 <body>
@@ -208,28 +257,28 @@ h1,h2,h3,h4{letter-spacing:-0.01em}
   <!-- Screen 1: Landing -->
   <div id="s-landing" class="screen landing active">
     <div class="landing-badge"><span class="pulse-dot"></span>AI Demo Day 2026</div>
-    <h1>Ваш <span class="grad">ИИ-профиль</span></h1>
-    <p class="sub">7 вопросов — и мы определим, какие ИИ-решения подходят вашему бизнесу</p>
+    <h1>Ваши <span class="grad">продукты</span><br>Halyk Bank</h1>
+    <p class="sub">5 вопросов о вашем бизнесе — и AI подберёт топ-3 продукта Халык Банка именно для вас</p>
     <div class="stats-row">
-      <div class="stat-item"><div class="stat-num">7</div><div class="stat-label">вопросов</div></div>
+      <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">вопросов</div></div>
       <div class="stat-item"><div class="stat-num">2</div><div class="stat-label">минуты</div></div>
-      <div class="stat-item"><div class="stat-num">1</div><div class="stat-label">профиль</div></div>
+      <div class="stat-item"><div class="stat-num">3</div><div class="stat-label">продукта</div></div>
     </div>
-    <button class="btn-primary" id="btnStart">Начать диагностику <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+    <button class="btn-primary" id="btnStart">Начать <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
   </div>
 
   <!-- Screen 2: User Info -->
   <div id="s-info" class="screen info-screen">
-    <h2>Хотите персонализировать результат?</h2>
-    <p class="info-sub">Заполните данные или пропустите — квиз работает в обоих режимах</p>
+    <h2>Расскажите о себе</h2>
+    <p class="info-sub">Необязательно — но так мы персонализируем результат</p>
     <div class="form-group">
       <label class="form-label" for="userName">Имя</label>
       <input type="text" id="userName" class="form-input" placeholder="Как вас зовут?" maxlength="100" autocomplete="given-name">
     </div>
     <div class="form-group">
-      <label class="form-label" for="userDept">Департамент</label>
+      <label class="form-label" for="userDept">Отдел / Должность</label>
       <select id="userDept" class="form-select">
-        <option value="">Выберите департамент</option>
+        <option value="">Выберите отдел</option>
         <option>IT</option>
         <option>Розничный бизнес</option>
         <option>Корпоративный бизнес</option>
@@ -244,21 +293,21 @@ h1,h2,h3,h4{letter-spacing:-0.01em}
     </div>
     <label class="consent-row" id="consentRow">
       <input type="checkbox" id="consentCheck">
-      <span class="consent-text">Я согласен(на) на обработку персональных данных</span>
+      <span class="consent-text">Я согласен(на) на обработку персональных данных и получение результатов квиза</span>
     </label>
-    <div class="consent-error" id="consentErr">Для продолжения с именем необходимо согласие на обработку данных</div>
+    <div class="consent-error" id="consentErr">Необходимо согласие на обработку данных для продолжения</div>
     <div class="btn-row">
       <button class="btn-primary" id="btnContinue">Продолжить</button>
-      <button class="btn-outline" id="btnSkip">Пропустить</button>
+      <button class="btn-outline" id="btnSkipInfo">Пропустить</button>
     </div>
   </div>
 
-  <!-- Screen 3: Quiz -->
+  <!-- Screen 3: MCQ Quiz (Q1–Q5) -->
   <div id="s-quiz" class="screen">
     <div class="progress-wrap">
       <div class="progress-header">
         <span class="progress-label">Прогресс</span>
-        <span class="progress-counter"><span class="cur" id="qNum">1</span> / 7</span>
+        <span class="progress-counter"><span class="cur" id="qNum">1</span> / 5</span>
       </div>
       <div class="progress-track"><div class="progress-fill" id="pFill"></div></div>
     </div>
@@ -275,744 +324,745 @@ h1,h2,h3,h4{letter-spacing:-0.01em}
     <div class="auto-hint" id="autoHint">Автопереход через секунду...</div>
   </div>
 
-  <!-- Screen 4: Beta Testing -->
-  <div id="s-beta" class="screen"></div>
+  <!-- Screen 4: Open Questions -->
+  <div id="s-open" class="screen">
+    <div class="open-screen">
+      <h2>Расскажите подробнее</h2>
+      <p class="open-sub">Ваши ответы помогут AI дать более точную рекомендацию. Оба поля необязательны.</p>
+      <div class="form-group">
+        <div class="open-q-label">Опишите главную задачу или проблему вашего бизнеса прямо сейчас<span class="open-optional">(необязательно)</span></div>
+        <textarea id="openQ6" class="form-input" placeholder="Например: хотим выйти на новые рынки, но не знаем как управлять валютными рисками..." rows="4"></textarea>
+      </div>
+      <div class="form-group">
+        <div class="open-q-label">Расскажите о себе: ваша роль в компании и что вас лично интересует в AI?<span class="open-optional">(необязательно)</span></div>
+        <textarea id="openQ7" class="form-input" placeholder="Например: я CFO, интересует автоматизация финансовой отчётности и прогнозирование..." rows="4"></textarea>
+      </div>
+      <div class="open-btns">
+        <button class="btn-primary" id="btnGetRec">Получить рекомендацию &rarr;</button>
+        <button class="btn-outline" id="btnSkipOpen">Пропустить</button>
+      </div>
+    </div>
+  </div>
 
-  <!-- Screen 5: Results -->
+  <!-- Screen 5: Loading -->
+  <div id="s-loading" class="screen">
+    <div class="loading-screen">
+      <div class="loading-spinner"></div>
+      <div style="font-size:22px;font-weight:800;color:var(--text-white);margin-bottom:8px">AI анализирует ваш бизнес</div>
+      <div style="font-size:14px;color:var(--text-dim);margin-bottom:4px">Подбираем персональные продукты...</div>
+      <div class="loading-steps" id="loadingSteps">
+        <div class="loading-step" id="step0">
+          <span class="step-check">✓</span>
+          <span>Анализируем ваши ответы...</span>
+        </div>
+        <div class="loading-step" id="step1">
+          <span class="step-check">✓</span>
+          <span>Подбираем продукты из матрицы...</span>
+        </div>
+        <div class="loading-step" id="step2">
+          <span class="step-check">✓</span>
+          <span>AI генерирует персональные рекомендации...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 6: Results -->
   <div id="s-results" class="screen"></div>
 
-  <!-- Screen 6: Thank You -->
+  <!-- Screen 7: Beta Testing -->
+  <div id="s-beta" class="screen"></div>
+
+  <!-- Screen 8: Thank You -->
   <div id="s-thanks" class="screen thanks"></div>
 </div>
 
 <div class="kb-hint" id="kbHint">
-  <span><span class="key">1</span>-<span class="key">4</span> выбрать</span>
+  <span><span class="key">1</span>-<span class="key">5</span> выбрать</span>
   <span><span class="key">&larr;</span> назад</span>
   <span><span class="key">&rarr;</span> далее</span>
+  <span><span class="key">Enter</span> подтвердить</span>
 </div>
 
 <script>
 /* ===== CONFIG ===== */
 const CONFIG = {
-  EDGE_FUNCTION_URL: 'https://hqxsoccyqrotbqlzszhe.supabase.co/functions/v1/submit-quiz'
+  RECOMMEND_URL: 'https://hqxsoccyqrotbqlzszhe.supabase.co/functions/v1/get-recommendation',
+  SUBMIT_URL: 'https://hqxsoccyqrotbqlzszhe.supabase.co/functions/v1/submit-quiz',
 };
 
 /* ===== DATA ===== */
-const questions = [
-  {
-    text: "\u041A\u043E\u0433\u0434\u0430 \u0432\u044B \u0441\u043B\u044B\u0448\u0438\u0442\u0435 \u00AB\u0418\u0418 \u0432 \u0431\u0430\u043D\u043A\u0438\u043D\u0433\u0435\u00BB \u2014 \u0447\u0442\u043E \u043F\u0435\u0440\u0432\u043E\u0435 \u043F\u0440\u0438\u0445\u043E\u0434\u0438\u0442 \u0432 \u0433\u043E\u043B\u043E\u0432\u0443?",
-    options: [
-      { text: "\u0427\u0430\u0442-\u0431\u043E\u0442\u044B, \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u043D\u0430\u043A\u043E\u043D\u0435\u0446-\u0442\u043E \u043D\u043E\u0440\u043C\u0430\u043B\u044C\u043D\u043E \u043E\u0442\u0432\u0435\u0447\u0430\u044E\u0442", scores: { tax_adviser: 1, voice: 1, chat: 3 }, profile: { pragmatist: 2, optimizer: 1, visionary: 0 } },
-      { text: "\u0413\u043E\u043B\u043E\u0441\u043E\u0432\u044B\u0435 \u043F\u043E\u043C\u043E\u0449\u043D\u0438\u043A\u0438 \u2014 \u043A\u0430\u043A Siri, \u0442\u043E\u043B\u044C\u043A\u043E \u0434\u043B\u044F \u0431\u0430\u043D\u043A\u0430", scores: { tax_adviser: 0, voice: 3, chat: 1 }, profile: { pragmatist: 1, optimizer: 1, visionary: 1 } },
-      { text: "\u041F\u043E\u043C\u043E\u0449\u043D\u0438\u043A \u043F\u043E \u043D\u0430\u043B\u043E\u0433\u0430\u043C \u0438 \u0434\u0435\u043A\u043B\u0430\u0440\u0430\u0446\u0438\u044F\u043C \u2014 \u0431\u0443\u0445\u0433\u0430\u043B\u0442\u0435\u0440 \u043D\u0435 \u043D\u0443\u0436\u0435\u043D", scores: { tax_adviser: 3, voice: 0, chat: 1 }, profile: { pragmatist: 1, optimizer: 2, visionary: 1 } },
-      { text: "\u0410\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0437\u0430\u0446\u0438\u044F \u0440\u0443\u0442\u0438\u043D\u044B \u2014 \u043C\u0435\u043D\u044C\u0448\u0435 \u043B\u044E\u0434\u0435\u0439, \u0431\u044B\u0441\u0442\u0440\u0435\u0435 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u044B", scores: { tax_adviser: 1, voice: 2, chat: 2 }, profile: { pragmatist: 2, optimizer: 2, visionary: 0 } }
-    ]
+const PRODUCTS = {
+  acquiring:     { name: 'Эквайринг',             desc: 'Приём безналичных платежей, POS-терминалы',                  icon: '💳' },
+  rko:           { name: 'РКО — Тарифный пакет',  desc: 'Расчётно-кассовое обслуживание для бизнеса',                icon: '🏦' },
+  credit:        { name: 'Цифровой кредит ИП/ТОО',desc: 'Быстрое онлайн-кредитование для бизнеса',                   icon: '💰' },
+  salary:        { name: 'Зарплатный проект',      desc: 'Перевод зарплаты сотрудникам через Халык',                  icon: '👥' },
+  online_duken:  { name: 'OnlineDuken',            desc: 'Онлайн-витрина для товаров и услуг',                        icon: '🛍️' },
+  deposit:       { name: 'Депозит',                desc: 'Размещение свободных средств под процент',                  icon: '📈' },
+  guarantees:    { name: 'Гарантии ЦБТГ/БИО',     desc: 'Банковские гарантии для тендеров и контрактов',             icon: '🛡️' },
+  dealing:       { name: 'Дилинг (Halyk FX)',      desc: 'Обмен валют, хеджирование валютных рисков',                 icon: '💱' },
+  mercury:       { name: 'Mercury X',              desc: 'Международные переводы нового поколения',                   icon: '🌍' },
+  ved:           { name: 'ВЭД (ВК, дилинг)',       desc: 'Внешнеэкономическая деятельность, валютный контроль',       icon: '🌐' },
+  halyk_market:  { name: 'Halyk Market',           desc: 'Маркетплейс Халык Банка',                                   icon: '🏪' },
+  restaurants:   { name: 'Халык-рестораны',        desc: 'Сервис подбора ресторанов для бизнес-встреч',               icon: '🍽️' },
+  tax_adviser:   { name: 'Tax Adviser',            desc: 'Налоговое планирование и оптимизация',                      icon: '📊' },
+};
+
+const MATRIX = {
+  b2b: {
+    'Предоставление услуг':                   ['acquiring', 'rko', 'credit', 'salary', 'online_duken'],
+    'Сельское хозяйство':                     ['credit', 'deposit', 'rko', 'guarantees', 'dealing', 'mercury'],
+    'Оптовая торговля':                       ['rko', 'ved', 'credit', 'salary', 'online_duken', 'mercury'],
+    'Транспорт и логистика':                  ['rko', 'credit', 'salary', 'ved'],
+    'Прочие строит. работы':                  ['guarantees', 'rko', 'credit', 'deposit'],
+    'Операции с недвижимостью':               ['rko', 'deposit', 'credit'],
+    'Гос. органы, образование, здравоохр.':   ['salary', 'rko', 'deposit'],
+    'Лёгкая и обраб. промышленность':         ['rko', 'dealing', 'credit', 'deposit', 'salary', 'mercury'],
+    'Производственное строительство':         ['rko', 'guarantees', 'credit', 'dealing', 'salary'],
   },
-  {
-    text: "\u0427\u0442\u043E \u0432\u0430\u0441 \u0431\u043E\u043B\u044C\u0448\u0435 \u0432\u043F\u0435\u0447\u0430\u0442\u043B\u044F\u0435\u0442 \u0432 \u0441\u043E\u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E\u043C \u0418\u0418?",
-    options: [
-      { text: "\u041F\u043E\u043D\u0438\u043C\u0430\u0435\u0442 \u0435\u0441\u0442\u0435\u0441\u0442\u0432\u0435\u043D\u043D\u0443\u044E \u0440\u0435\u0447\u044C \u2014 \u0433\u043E\u0432\u043E\u0440\u0438\u0448\u044C \u043A\u0430\u043A \u0447\u0435\u043B\u043E\u0432\u0435\u043A\u0443", scores: { tax_adviser: 1, voice: 3, chat: 1 }, profile: { pragmatist: 1, optimizer: 0, visionary: 2 } },
-      { text: "\u041C\u0433\u043D\u043E\u0432\u0435\u043D\u043D\u043E \u043D\u0430\u0445\u043E\u0434\u0438\u0442 \u043D\u0443\u0436\u043D\u043E\u0435 \u0432 \u043E\u0433\u0440\u043E\u043C\u043D\u043E\u043C \u043E\u0431\u044A\u0451\u043C\u0435 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u0438", scores: { tax_adviser: 1, voice: 1, chat: 3 }, profile: { pragmatist: 2, optimizer: 2, visionary: 0 } },
-      { text: "\u0420\u0430\u0437\u0431\u0438\u0440\u0430\u0435\u0442\u0441\u044F \u0432 \u0441\u043B\u043E\u0436\u043D\u044B\u0445 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0430\u0445 \u0438 \u0437\u0430\u043A\u043E\u043D\u0430\u0445", scores: { tax_adviser: 3, voice: 0, chat: 1 }, profile: { pragmatist: 1, optimizer: 1, visionary: 2 } },
-      { text: "\u0420\u0430\u0431\u043E\u0442\u0430\u0435\u0442 24/7 \u0431\u0435\u0437 \u0432\u044B\u0445\u043E\u0434\u043D\u044B\u0445 \u0438 \u043F\u0435\u0440\u0435\u0440\u044B\u0432\u043E\u0432", scores: { tax_adviser: 1, voice: 2, chat: 2 }, profile: { pragmatist: 3, optimizer: 1, visionary: 0 } }
-    ]
-  },
-  {
-    text: "\u041F\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u044C\u0442\u0435: \u0418\u0418 \u043C\u043E\u0436\u0435\u0442 \u0440\u0435\u0448\u0438\u0442\u044C \u043E\u0434\u043D\u0443 \u043F\u0440\u043E\u0431\u043B\u0435\u043C\u0443. \u041A\u0430\u043A\u0443\u044E?",
-    options: [
-      { text: "\u041A\u043B\u0438\u0435\u043D\u0442 \u0436\u0434\u0451\u0442 \u043D\u0430 \u043B\u0438\u043D\u0438\u0438 5 \u043C\u0438\u043D\u0443\u0442 \u2014 \u0438 \u0432\u0435\u0448\u0430\u0435\u0442 \u0442\u0440\u0443\u0431\u043A\u0443", scores: { tax_adviser: 0, voice: 3, chat: 1 }, profile: { pragmatist: 2, optimizer: 2, visionary: 0 } },
-      { text: "\u041A\u043B\u0438\u0435\u043D\u0442 \u043D\u0435 \u043C\u043E\u0436\u0435\u0442 \u043D\u0430\u0439\u0442\u0438 \u043E\u0442\u0432\u0435\u0442 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435 \u0438 \u0435\u0434\u0435\u0442 \u0432 \u043E\u0442\u0434\u0435\u043B\u0435\u043D\u0438\u0435", scores: { tax_adviser: 0, voice: 0, chat: 3 }, profile: { pragmatist: 2, optimizer: 1, visionary: 0 } },
-      { text: "\u041F\u0440\u0435\u0434\u043F\u0440\u0438\u043D\u0438\u043C\u0430\u0442\u0435\u043B\u044C \u0442\u0440\u0430\u0442\u0438\u0442 2 \u0434\u043D\u044F \u043D\u0430 \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u0435 \u043D\u0430\u043B\u043E\u0433\u043E\u0432\u043E\u0439 \u0434\u0435\u043A\u043B\u0430\u0440\u0430\u0446\u0438\u0438", scores: { tax_adviser: 3, voice: 0, chat: 1 }, profile: { pragmatist: 1, optimizer: 3, visionary: 0 } },
-      { text: "\u041E\u043F\u0435\u0440\u0430\u0442\u043E\u0440 \u0442\u0440\u0430\u0442\u0438\u0442 \u0432\u0440\u0435\u043C\u044F \u043D\u0430 \u0442\u0438\u043F\u043E\u0432\u044B\u0435 \u0432\u043E\u043F\u0440\u043E\u0441\u044B \u0432\u043C\u0435\u0441\u0442\u043E \u0441\u043B\u043E\u0436\u043D\u044B\u0445 \u043A\u0435\u0439\u0441\u043E\u0432", scores: { tax_adviser: 0, voice: 2, chat: 2 }, profile: { pragmatist: 1, optimizer: 3, visionary: 0 } }
-    ]
-  },
-  {
-    text: "\u041A\u0430\u043A \u0432\u0430\u043C \u043A\u043E\u043C\u0444\u043E\u0440\u0442\u043D\u0435\u0435 \u0432\u0437\u0430\u0438\u043C\u043E\u0434\u0435\u0439\u0441\u0442\u0432\u043E\u0432\u0430\u0442\u044C \u0441 \u0418\u0418?",
-    options: [
-      { text: "\u0413\u043E\u043B\u043E\u0441\u043E\u043C \u2014 \u0431\u044B\u0441\u0442\u0440\u0435\u0435 \u0438 \u0435\u0441\u0442\u0435\u0441\u0442\u0432\u0435\u043D\u043D\u0435\u0435, \u0447\u0435\u043C \u043F\u0435\u0447\u0430\u0442\u0430\u0442\u044C", scores: { tax_adviser: 1, voice: 3, chat: 0 }, profile: { pragmatist: 1, optimizer: 1, visionary: 1 } },
-      { text: "\u0422\u0435\u043A\u0441\u0442\u043E\u043C \u2014 \u043C\u043E\u0436\u043D\u043E \u043F\u0435\u0440\u0435\u0447\u0438\u0442\u0430\u0442\u044C \u043E\u0442\u0432\u0435\u0442 \u0438 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C", scores: { tax_adviser: 1, voice: 0, chat: 3 }, profile: { pragmatist: 2, optimizer: 1, visionary: 0 } },
-      { text: "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442 \u2014 \u043F\u0443\u0441\u0442\u044C \u0418\u0418 \u0441\u0430\u043C \u0440\u0430\u0437\u0431\u0435\u0440\u0451\u0442\u0441\u044F", scores: { tax_adviser: 3, voice: 0, chat: 1 }, profile: { pragmatist: 0, optimizer: 2, visionary: 1 } },
-      { text: "\u041D\u0435 \u0434\u0443\u043C\u0430\u0442\u044C \u043E\u0431 \u044D\u0442\u043E\u043C \u2014 \u043F\u0443\u0441\u0442\u044C \u0418\u0418 \u0441\u0430\u043C \u043F\u043E\u0434\u0441\u0442\u0440\u043E\u0438\u0442\u0441\u044F \u043F\u043E\u0434 \u0441\u0438\u0442\u0443\u0430\u0446\u0438\u044E", scores: { tax_adviser: 1, voice: 1, chat: 1 }, profile: { pragmatist: 0, optimizer: 1, visionary: 3 } }
-    ]
-  },
-  {
-    text: "\u0427\u0442\u043E \u0432\u0430\u0441 \u0431\u043E\u043B\u044C\u0448\u0435 \u0432\u0441\u0435\u0433\u043E \u043D\u0430\u0441\u0442\u043E\u0440\u0430\u0436\u0438\u0432\u0430\u0435\u0442 \u0432 \u0418\u0418?",
-    options: [
-      { text: "\u041C\u043E\u0436\u0435\u0442 \u0434\u0430\u0442\u044C \u043D\u0435\u0442\u043E\u0447\u043D\u044B\u0439 \u043E\u0442\u0432\u0435\u0442 \u0438 \u043A\u043B\u0438\u0435\u043D\u0442 \u043F\u0440\u0438\u043C\u0435\u0442 \u043F\u043B\u043E\u0445\u043E\u0435 \u0440\u0435\u0448\u0435\u043D\u0438\u0435", scores: { tax_adviser: 1, voice: 1, chat: 2 }, profile: { pragmatist: 3, optimizer: 1, visionary: 0 } },
-      { text: "\u041F\u043E\u0442\u0435\u0440\u044F \u00AB\u0447\u0435\u043B\u043E\u0432\u0435\u0447\u0435\u0441\u043A\u043E\u0433\u043E\u00BB \u043A\u043E\u043D\u0442\u0430\u043A\u0442\u0430 \u0432 \u043E\u0431\u0441\u043B\u0443\u0436\u0438\u0432\u0430\u043D\u0438\u0438", scores: { tax_adviser: 2, voice: 2, chat: 0 }, profile: { pragmatist: 1, optimizer: 0, visionary: 2 } },
-      { text: "\u0418\u0418 \u043D\u0435 \u043F\u043E\u043D\u0438\u043C\u0430\u0435\u0442 \u043D\u044E\u0430\u043D\u0441\u044B \u0437\u0430\u043A\u043E\u043D\u043E\u0434\u0430\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u0430 \u0438 \u043C\u043E\u0436\u0435\u0442 \u043E\u0448\u0438\u0431\u0438\u0442\u044C\u0441\u044F \u0432 \u0440\u0430\u0441\u0447\u0451\u0442\u0430\u0445", scores: { tax_adviser: 2, voice: 1, chat: 1 }, profile: { pragmatist: 2, optimizer: 1, visionary: 1 } },
-      { text: "\u041D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u043D\u0430\u0441\u0442\u043E\u0440\u0430\u0436\u0438\u0432\u0430\u0435\u0442 \u2014 \u0432\u043E\u043F\u0440\u043E\u0441 \u043D\u0435 \u00AB\u0435\u0441\u043B\u0438\u00BB, \u0430 \u00AB\u043A\u043E\u0433\u0434\u0430\u00BB", scores: { tax_adviser: 1, voice: 1, chat: 2 }, profile: { pragmatist: 0, optimizer: 1, visionary: 3 } }
-    ]
-  },
-  {
-    text: "\u0411\u0430\u043D\u043A \u0431\u0443\u0434\u0443\u0449\u0435\u0433\u043E \u2014 \u044D\u0442\u043E \u0431\u0430\u043D\u043A, \u043A\u043E\u0442\u043E\u0440\u044B\u0439...",
-    options: [
-      { text: "\u041F\u043E\u043C\u043E\u0433\u0430\u0435\u0442 \u0441 \u043D\u0430\u043B\u043E\u0433\u0430\u043C\u0438, \u0434\u0435\u043A\u043B\u0430\u0440\u0430\u0446\u0438\u044F\u043C\u0438 \u0438 \u0444\u0438\u043D\u0430\u043D\u0441\u043E\u0432\u044B\u043C \u043F\u043B\u0430\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435\u043C", scores: { tax_adviser: 3, voice: 0, chat: 1 }, profile: { pragmatist: 1, optimizer: 1, visionary: 2 } },
-      { text: "\u041E\u0442\u0432\u0435\u0447\u0430\u0435\u0442 \u0437\u0430 \u0441\u0435\u043A\u0443\u043D\u0434\u044B \u043D\u0430 \u043B\u044E\u0431\u043E\u043C \u044F\u0437\u044B\u043A\u0435 \u0438 \u0432 \u043B\u044E\u0431\u043E\u0435 \u0432\u0440\u0435\u043C\u044F", scores: { tax_adviser: 0, voice: 3, chat: 2 }, profile: { pragmatist: 2, optimizer: 1, visionary: 1 } },
-      { text: "\u0414\u0430\u0451\u0442 \u044D\u043A\u0441\u043F\u0435\u0440\u0442\u043D\u044B\u0435 \u043E\u0442\u0432\u0435\u0442\u044B \u0431\u0435\u0437 \u043F\u043E\u0445\u043E\u0434\u043E\u0432 \u0432 \u043E\u0442\u0434\u0435\u043B\u0435\u043D\u0438\u0435", scores: { tax_adviser: 1, voice: 1, chat: 3 }, profile: { pragmatist: 2, optimizer: 2, visionary: 0 } },
-      { text: "\u0421\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u0441\u044F \u0447\u0430\u0441\u0442\u044C\u044E \u043F\u043E\u0432\u0441\u0435\u0434\u043D\u0435\u0432\u043D\u043E\u0439 \u0436\u0438\u0437\u043D\u0438 \u2014 \u043D\u0435 \u0442\u043E\u043B\u044C\u043A\u043E \u0444\u0438\u043D\u0430\u043D\u0441\u044B", scores: { tax_adviser: 1, voice: 1, chat: 1 }, profile: { pragmatist: 0, optimizer: 0, visionary: 3 } }
-    ]
-  },
-  {
-    text: "\u0415\u0441\u043B\u0438 \u0431\u044B \u0418\u0418-\u0430\u0441\u0441\u0438\u0441\u0442\u0435\u043D\u0442 Halyk Bank \u043C\u043E\u0433 \u0441\u0434\u0435\u043B\u0430\u0442\u044C \u0434\u043B\u044F \u0432\u0430\u0441 \u0447\u0442\u043E-\u0442\u043E \u043F\u0440\u044F\u043C\u043E \u0441\u0435\u0439\u0447\u0430\u0441 \u2014 \u0447\u0442\u043E \u0431\u044B \u044D\u0442\u043E \u0431\u044B\u043B\u043E?",
-    options: [
-      { text: "\u0420\u0430\u0441\u0441\u0447\u0438\u0442\u0430\u043B \u043D\u0430\u043B\u043E\u0433\u0438 \u0438 \u0437\u0430\u043F\u043E\u043B\u043D\u0438\u043B \u0434\u0435\u043A\u043B\u0430\u0440\u0430\u0446\u0438\u044E 910 \u0437\u0430 \u043C\u0435\u043D\u044F", scores: { tax_adviser: 3, voice: 0, chat: 0 }, profile: { pragmatist: 2, optimizer: 1, visionary: 0 } },
-      { text: "\u041E\u0442\u0432\u0435\u0442\u0438\u043B \u0433\u043E\u043B\u043E\u0441\u043E\u043C \u043D\u0430 \u0432\u043E\u043F\u0440\u043E\u0441 \u043F\u043E \u043C\u043E\u0435\u043C\u0443 \u0441\u0447\u0451\u0442\u0443 \u2014 \u0431\u0435\u0437 \u043E\u0436\u0438\u0434\u0430\u043D\u0438\u044F", scores: { tax_adviser: 0, voice: 3, chat: 0 }, profile: { pragmatist: 2, optimizer: 1, visionary: 0 } },
-      { text: "\u041E\u0431\u044A\u044F\u0441\u043D\u0438\u043B \u0432 \u0447\u0430\u0442\u0435 \u0443\u0441\u043B\u043E\u0432\u0438\u044F \u0438\u043F\u043E\u0442\u0435\u043A\u0438 \u043F\u0440\u043E\u0441\u0442\u044B\u043C \u044F\u0437\u044B\u043A\u043E\u043C", scores: { tax_adviser: 0, voice: 0, chat: 3 }, profile: { pragmatist: 2, optimizer: 1, visionary: 0 } },
-      { text: "\u0412\u0441\u0451 \u0432\u043C\u0435\u0441\u0442\u0435 \u2014 \u044F \u0445\u043E\u0447\u0443 \u0447\u0442\u043E\u0431\u044B \u0418\u0418 \u0431\u044B\u043B \u0432\u0435\u0437\u0434\u0435", scores: { tax_adviser: 2, voice: 2, chat: 2 }, profile: { pragmatist: 0, optimizer: 1, visionary: 3 } }
-    ]
+  b2c: {
+    'Продуктовые магазины':                   ['acquiring', 'online_duken', 'rko', 'halyk_market', 'credit', 'salary'],
+    'Одежда и обувь':                         ['acquiring', 'halyk_market', 'rko', 'credit', 'ved', 'mercury'],
+    'Кофейни, кафе, рестораны':               ['acquiring', 'restaurants', 'credit', 'rko', 'online_duken', 'deposit'],
+    'АЗС':                                    ['acquiring', 'rko', 'ved', 'credit', 'salary', 'deposit'],
+    'Электроника':                            ['acquiring', 'rko', 'halyk_market', 'credit', 'ved', 'deposit'],
+    'Аптеки и Оптика':                        ['acquiring', 'rko', 'halyk_market', 'online_duken', 'ved'],
+    'Мед центры':                             ['acquiring', 'rko', 'credit', 'salary'],
+    'Строительные товары':                    ['acquiring', 'ved', 'rko', 'credit', 'mercury', 'deposit'],
+    'Гостиницы, мотели':                      ['acquiring', 'rko', 'salary', 'deposit'],
+    'Розничная торговля (прочее)':            ['acquiring', 'rko', 'credit', 'online_duken', 'halyk_market', 'mercury'],
   }
+};
+
+const Q3_MODS = {
+  small:      { salary: -10, online_duken: 5, tax_adviser: 5 },
+  medium:     { salary: 10, rko: 5, tax_adviser: 8 },
+  large:      { salary: 15, ved: 5, guarantees: 5, tax_adviser: 10 },
+  enterprise: { salary: 15, ved: 10, guarantees: 10, dealing: 5, tax_adviser: 15 },
+};
+const Q4_MODS = {
+  finance:       { credit: 15, deposit: 5, tax_adviser: 5 },
+  optimize:      { tax_adviser: 15, rko: 10, acquiring: 5 },
+  international: { ved: 15, mercury: 10, dealing: 10, tax_adviser: 5 },
+  automate:      { online_duken: 10, halyk_market: 10, restaurants: 5, acquiring: 5 },
+};
+const Q5_MODS = {
+  full_online: { online_duken: 10, halyk_market: 10, mercury: 5 },
+  partial:     { acquiring: 5, online_duken: 5 },
+  offline:     { acquiring: 10, rko: 5, online_duken: -5, halyk_market: -5 },
+};
+
+const AI_TRENDS = {
+  'Кофейни, кафе, рестораны':              '87% ресторанов с AI увеличили выручку на 15%',
+  'Продуктовые магазины':                  '92% ритейлеров увеличивают инвестиции в ИИ',
+  'Одежда и обувь':                        'AI-персонализация увеличивает конверсию на 30%',
+  'Сельское хозяйство':                    'Рынок AI в агро растёт на 30% в год',
+  'Оптовая торговля':                      'AI сокращает логистические затраты на 5–20%',
+  'Транспорт и логистика':                 'AI сокращает логистические затраты на 5–20%',
+  'Прочие строит. работы':                 'Рынок AI в строительстве: $11B → $24B к 2030',
+  'Производственное строительство':        'Рынок AI в строительстве: $11B → $24B к 2030',
+  'Лёгкая и обраб. промышленность':        'ROI от AI внедрений окупается за 8–11 месяцев',
+  'Предоставление услуг':                  '89% сервисных компаний наращивают бюджет на AI',
+  'Гос. органы, образование, здравоохр.':  '75% организаций к 2026 операционализируют AI',
+  'Операции с недвижимостью':              'AI автоматизирует до 40% рутинных задач в недвижимости',
+  'АЗС':                                   'Умные АЗС с AI снижают операционные затраты на 20%',
+  'Электроника':                           'AI-рекомендации увеличивают средний чек на 25%',
+  'Аптеки и Оптика':                       'AI в фармацевтике: прогнозирование спроса с точностью 95%',
+  'Мед центры':                            'AI сокращает время диагностики на 30–50%',
+  'Строительные товары':                   'AI-прогнозирование снижает складские издержки на 15%',
+  'Гостиницы, мотели':                     'AI увеличивает загрузку отелей на 12% через персонализацию',
+  'Розничная торговля (прочее)':           'AI-персонализация увеличивает конверсию на 20–35%',
+};
+
+/* MCQ questions definition (Q1–Q5). Q2 options are rendered dynamically. */
+const QUESTIONS = [
+  {
+    id: 'q1',
+    text: 'Вы принимаете оплату от клиентов напрямую?',
+    options: [
+      { text: 'Да, у нас розничные клиенты', value: 'b2c' },
+      { text: 'Нет, работаем с бизнесом / государством', value: 'b2b' },
+    ],
+    markers: false,
+  },
+  {
+    id: 'q2',
+    text: 'В какой отрасли работаете?',
+    dynamic: true, // options built from MATRIX based on answers[0]
+    markers: false,
+    grid: true,
+  },
+  {
+    id: 'q3',
+    text: 'Сколько сотрудников в компании?',
+    options: [
+      { text: 'До 30 человек', value: 'small' },
+      { text: '30–200 человек', value: 'medium' },
+      { text: '200–1000 человек', value: 'large' },
+      { text: 'Более 1000 / холдинг', value: 'enterprise' },
+    ],
+    markers: true,
+  },
+  {
+    id: 'q4',
+    text: 'Какая задача сейчас в приоритете?',
+    options: [
+      { text: 'Привлечь финансирование на рост', value: 'finance' },
+      { text: 'Оптимизировать расходы', value: 'optimize' },
+      { text: 'Выйти на международный рынок', value: 'international' },
+      { text: 'Автоматизировать продажи', value: 'automate' },
+    ],
+    markers: true,
+  },
+  {
+    id: 'q5',
+    text: 'Насколько ваш бизнес уже в онлайне?',
+    options: [
+      { text: 'Полностью онлайн (e-commerce, digital)', value: 'full_online' },
+      { text: 'Есть сайт / соцсети, но основа — офлайн', value: 'partial' },
+      { text: 'Пока всё офлайн', value: 'offline' },
+    ],
+    markers: true,
+  },
 ];
 
-const products = {
-  tax_adviser: { name: "AI Tax Adviser", icon: "\uD83D\uDCCB", desc: "\u0418\u0418-\u043A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u043D\u0442 \u043F\u043E \u043D\u0430\u043B\u043E\u0433\u043E\u0432\u043E\u043C\u0443 \u043A\u043E\u0434\u0435\u043A\u0441\u0443 \u0420\u041A. \u041A\u043E\u043D\u0441\u0443\u043B\u044C\u0442\u0430\u0446\u0438\u0438 \u043F\u043E \u043B\u044E\u0431\u044B\u043C \u0432\u043E\u043F\u0440\u043E\u0441\u0430\u043C, \u0437\u0430\u043F\u043E\u043B\u043D\u0435\u043D\u0438\u0435 \u0434\u0435\u043A\u043B\u0430\u0440\u0430\u0446\u0438\u0438 910 \u0434\u043B\u044F \u0418\u041F \u0438 \u041C\u0421\u0411, \u0432\u0435\u0440\u0438\u0444\u0438\u043A\u0430\u0446\u0438\u044F \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u043E\u0432, \u0440\u0430\u0441\u0447\u0451\u0442\u044B \u043D\u0430\u043B\u043E\u0433\u043E\u0432 \u0438 \u0440\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0430\u0446\u0438\u0438 \u043F\u043E \u043E\u043F\u0442\u0438\u043C\u0438\u0437\u0430\u0446\u0438\u0438.", status: "\u0412\u043D\u0443\u0442\u0440\u0435\u043D\u043D\u0435\u0435 \u0442\u0435\u0441\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u2014 \u043F\u043E\u043F\u0440\u043E\u0431\u0443\u0439\u0442\u0435 \u043F\u0440\u043E\u0442\u043E\u0442\u0438\u043F \u043D\u0430 \u0441\u0442\u0435\u043D\u0434\u0435", insight: "\u0412\u0430\u043C \u0432\u0430\u0436\u043D\u0430 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0437\u0430\u0446\u0438\u044F \u0441\u043B\u043E\u0436\u043D\u044B\u0445 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0432 \u2014 Tax Adviser \u0443\u0431\u0438\u0440\u0430\u0435\u0442 \u0440\u0443\u0442\u0438\u043D\u0443 \u0438 \u043F\u043E\u043C\u043E\u0433\u0430\u0435\u0442 \u043D\u0435 \u043E\u0448\u0438\u0431\u0438\u0442\u044C\u0441\u044F \u0432 \u0440\u0430\u0441\u0447\u0451\u0442\u0430\u0445." },
-  voice: { name: "\u0413\u043E\u043B\u043E\u0441\u043E\u0432\u043E\u0439 \u0420\u043E\u0431\u043E\u0442", icon: "\uD83C\uDFA4", desc: "\u0413\u043E\u043B\u043E\u0441\u043E\u0432\u043E\u0439 \u0418\u0418-\u0430\u0441\u0441\u0438\u0441\u0442\u0435\u043D\u0442 \u0432 \u043F\u0440\u0438\u043B\u043E\u0436\u0435\u043D\u0438\u0438 Halyk Bank. \u0420\u0430\u0441\u043F\u043E\u0437\u043D\u0430\u0451\u0442 \u0440\u0435\u0447\u044C \u043D\u0430 \u043A\u0430\u0437\u0430\u0445\u0441\u043A\u043E\u043C \u0438 \u0440\u0443\u0441\u0441\u043A\u043E\u043C, \u043C\u0433\u043D\u043E\u0432\u0435\u043D\u043D\u043E \u043E\u0442\u0432\u0435\u0447\u0430\u0435\u0442 \u0431\u0435\u0437 IVR-\u043C\u0435\u043D\u044E \u0438 \u043E\u0436\u0438\u0434\u0430\u043D\u0438\u044F.", status: "\u0423\u0436\u0435 \u0432 \u043F\u0440\u043E\u0434\u0430\u043A\u0448\u0435\u043D\u0435", insight: "\u0412\u044B \u0446\u0435\u043D\u0438\u0442\u0435 \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u0438 \u0435\u0441\u0442\u0435\u0441\u0442\u0432\u0435\u043D\u043D\u043E\u0441\u0442\u044C \u043E\u0431\u0449\u0435\u043D\u0438\u044F \u2014 \u0413\u043E\u043B\u043E\u0441\u043E\u0432\u043E\u0439 \u0420\u043E\u0431\u043E\u0442 \u0443\u0431\u0438\u0440\u0430\u0435\u0442 \u0431\u0430\u0440\u044C\u0435\u0440 \u043C\u0435\u0436\u0434\u0443 \u043A\u043B\u0438\u0435\u043D\u0442\u043E\u043C \u0438 \u0431\u0430\u043D\u043A\u043E\u043C." },
-  chat: { name: "\u0418\u0418 \u0427\u0430\u0442-\u0431\u043E\u0442", icon: "\uD83D\uDCAC", desc: "\u0422\u0435\u043A\u0441\u0442\u043E\u0432\u044B\u0439 \u0418\u0418-\u0430\u0441\u0441\u0438\u0441\u0442\u0435\u043D\u0442 \u043D\u0430 \u0441\u0430\u0439\u0442\u0435 \u0431\u0430\u043D\u043A\u0430. \u041F\u043E\u0448\u0430\u0433\u043E\u0432\u044B\u0435 \u0438\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u0438 \u043F\u043E \u0434\u0435\u043F\u043E\u0437\u0438\u0442\u0430\u043C, \u0438\u043F\u043E\u0442\u0435\u043A\u0435, \u0442\u0430\u0440\u0438\u0444\u0430\u043C. \u041A\u043E\u043D\u0432\u0435\u0440\u0442\u0438\u0440\u0443\u0435\u0442 \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u044F \u0432 \u0437\u0430\u044F\u0432\u043A\u0438.", status: "\u0423\u0436\u0435 \u0432 \u043F\u0440\u043E\u0434\u0430\u043A\u0448\u0435\u043D\u0435", insight: "\u0412\u044B \u0437\u0430 \u043F\u0440\u0430\u0433\u043C\u0430\u0442\u0438\u0447\u043D\u044B\u0439 \u043F\u043E\u0434\u0445\u043E\u0434 \u2014 \u0438 \u0427\u0430\u0442-\u0431\u043E\u0442 \u0438\u043C\u0435\u043D\u043D\u043E \u0442\u0430\u043A\u043E\u0439: \u0442\u043E\u0447\u043D\u044B\u0435 \u043E\u0442\u0432\u0435\u0442\u044B, \u044D\u043A\u043E\u043D\u043E\u043C\u0438\u044F \u0432\u0440\u0435\u043C\u0435\u043D\u0438, \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442." }
-};
-
-const profiles = {
-  visionary: { name: "\u0412\u0438\u0437\u0438\u043E\u043D\u0435\u0440", emoji: "\uD83D\uDD2D", desc: "\u0412\u044B \u0432\u0438\u0434\u0438\u0442\u0435 \u0418\u0418 \u043A\u0430\u043A \u0442\u0440\u0430\u043D\u0441\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044E, \u0430 \u043D\u0435 \u043F\u0440\u043E\u0441\u0442\u043E \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442. \u0412\u0430\u043C \u0432\u0430\u0436\u043D\u0430 \u043F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u0438\u0437\u0430\u0446\u0438\u044F, \u043F\u0440\u043E\u0430\u043A\u0442\u0438\u0432\u043D\u043E\u0441\u0442\u044C \u0438 \u0432\u044B\u0445\u043E\u0434 \u0431\u0430\u043D\u043A\u0430 \u0437\u0430 \u0440\u0430\u043C\u043A\u0438 \u0444\u0438\u043D\u0430\u043D\u0441\u043E\u0432\u044B\u0445 \u0443\u0441\u043B\u0443\u0433. \u0412\u044B \u0433\u043E\u0442\u043E\u0432\u044B \u043A \u0431\u0443\u0434\u0443\u0449\u0435\u043C\u0443 \u2014 \u0438 \u0436\u0434\u0451\u0442\u0435, \u0447\u0442\u043E \u0431\u0430\u043D\u043A \u0431\u0443\u0434\u0435\u0442 \u043D\u0430 \u0448\u0430\u0433 \u0432\u043F\u0435\u0440\u0435\u0434\u0438.", color: "#0AAE8A" },
-  pragmatist: { name: "\u041F\u0440\u0430\u0433\u043C\u0430\u0442\u0438\u043A", emoji: "\uD83C\uDFAF", desc: "\u0412\u044B \u043E\u0446\u0435\u043D\u0438\u0432\u0430\u0435\u0442\u0435 \u0418\u0418 \u043F\u043E \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u043E\u043C\u0443 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u0443: \u0431\u044B\u0441\u0442\u0440\u0435\u0435, \u0442\u043E\u0447\u043D\u0435\u0435, \u0434\u0435\u0448\u0435\u0432\u043B\u0435. \u0414\u043B\u044F \u0432\u0430\u0441 \u0432\u0430\u0436\u043D\u044B \u0441\u043A\u043E\u0440\u043E\u0441\u0442\u044C \u043E\u0442\u0432\u0435\u0442\u0430, \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u0441\u0442\u044C 24/7 \u0438 \u0441\u043E\u043A\u0440\u0430\u0449\u0435\u043D\u0438\u0435 \u0440\u0443\u0442\u0438\u043D\u043D\u044B\u0445 \u043E\u043F\u0435\u0440\u0430\u0446\u0438\u0439. \u0418\u0418 \u0434\u043E\u043B\u0436\u0435\u043D \u0440\u0435\u0448\u0430\u0442\u044C \u0437\u0430\u0434\u0430\u0447\u0438 \u2014 \u0430 \u043D\u0435 \u0432\u043F\u0435\u0447\u0430\u0442\u043B\u044F\u0442\u044C.", color: "#F9B000" },
-  optimizer: { name: "\u041E\u043F\u0442\u0438\u043C\u0438\u0437\u0430\u0442\u043E\u0440", emoji: "\u26A1", desc: "\u0412\u044B \u0444\u043E\u043A\u0443\u0441\u0438\u0440\u0443\u0435\u0442\u0435\u0441\u044C \u043D\u0430 \u044D\u0444\u0444\u0435\u043A\u0442\u0438\u0432\u043D\u043E\u0441\u0442\u0438 \u043F\u0440\u043E\u0446\u0435\u0441\u0441\u043E\u0432. \u0412\u0430\u043C \u0432\u0430\u0436\u043D\u043E, \u0447\u0442\u043E\u0431\u044B \u0418\u0418 \u0440\u0430\u0437\u0433\u0440\u0443\u0437\u0438\u043B \u043A\u043E\u043C\u0430\u043D\u0434\u0443, \u0443\u0431\u0440\u0430\u043B \u0443\u0437\u043A\u0438\u0435 \u043C\u0435\u0441\u0442\u0430 \u0438 \u043C\u0430\u0441\u0448\u0442\u0430\u0431\u0438\u0440\u043E\u0432\u0430\u043B\u0441\u044F \u0431\u0435\u0437 \u0440\u043E\u0441\u0442\u0430 \u0448\u0442\u0430\u0442\u0430. \u0412\u044B \u043C\u044B\u0441\u043B\u0438\u0442\u0435 \u0441\u0438\u0441\u0442\u0435\u043C\u0430\u043C\u0438.", color: "#6366F1" }
-};
+const MARKERS = ['А', 'Б', 'В', 'Г', 'Д'];
+const TOTAL = 5;
 
 /* ===== STATE ===== */
 let cur = 0;
-let answers = [];
-let autoTimer = null;
-let startTime = 0;
-let userData = { name: null, department: null, consent: false };
-let betaData = { interest: false, phone: null, email: null };
+let answers = new Array(TOTAL).fill(null);
+let openAnswers = { q6: '', q7: '' };
+let userData = { name: '', department: '', consent: false };
+let betaData = { interest: null, phone: '', email: '' };
+let recommendResult = null;
 let submitted = false;
-const TOTAL = questions.length;
-const MARKERS = ['\u0410', '\u0411', '\u0412', '\u0413'];
+let startTime = Date.now();
+let autoTimer = null;
 
-/* ===== DOM REFS ===== */
-const $ = (id) => document.getElementById(id);
-
-/* ===== SCREEN NAVIGATION ===== */
-function showScreen(id) {
+/* ===== HELPERS ===== */
+function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  $(id).classList.add('active');
+  document.getElementById(id).classList.add('active');
 }
 
-/* ===== Screen 1 -> Screen 2 ===== */
-$('btnStart').addEventListener('click', () => {
+function computeTop3(bType, industry, q3, q4, q5) {
+  const scores = {};
+  Object.keys(PRODUCTS).forEach(k => scores[k] = 0);
+  const row = (MATRIX[bType] || {})[industry] || [];
+  [60, 50, 40, 30, 20, 10].forEach((pts, i) => {
+    if (row[i]) scores[row[i]] = (scores[row[i]] || 0) + pts;
+  });
+  scores['tax_adviser'] = Math.max(scores['tax_adviser'] || 0, 35);
+  [Q3_MODS[q3], Q4_MODS[q4], Q5_MODS[q5]].forEach(mods => {
+    if (!mods) return;
+    Object.entries(mods).forEach(([k, v]) => { scores[k] = (scores[k] || 0) + v; });
+  });
+  return Object.entries(scores)
+    .filter(([, s]) => s > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([k]) => k);
+}
+
+function getIndustryOptions(bType) {
+  return Object.keys(MATRIX[bType] || {});
+}
+
+/* ===== LANDING ===== */
+document.getElementById('btnStart').addEventListener('click', () => {
   startTime = Date.now();
-  showScreen('s-info');
+  show('s-info');
 });
 
-/* ===== Screen 2 -> Screen 3 ===== */
-$('btnContinue').addEventListener('click', () => {
-  const name = $('userName').value.trim();
-  const dept = $('userDept').value;
-  const consent = $('consentCheck').checked;
+/* ===== INFO SCREEN ===== */
+document.getElementById('btnContinue').addEventListener('click', () => {
+  const name = document.getElementById('userName').value.trim();
+  const dept = document.getElementById('userDept').value;
+  const consent = document.getElementById('consentCheck').checked;
+  const err = document.getElementById('consentErr');
 
   if (!consent) {
-    $('consentErr').style.display = 'block';
-    $('consentErr').textContent = 'Необходимо согласие для участия в квизе';
+    err.style.display = 'block';
     return;
   }
-  $('consentErr').style.display = 'none';
-
-  if (name) {
-    userData.name = name.substring(0, 100);
-    userData.department = dept || null;
-    userData.consent = consent;
-  }
+  err.style.display = 'none';
+  userData = { name, department: dept, consent };
   startQuiz();
 });
 
-$('btnSkip').addEventListener('click', () => {
-  const consent = $('consentCheck').checked;
+document.getElementById('btnSkipInfo').addEventListener('click', () => {
+  const consent = document.getElementById('consentCheck').checked;
+  const err = document.getElementById('consentErr');
   if (!consent) {
-    $('consentErr').style.display = 'block';
-    $('consentErr').textContent = 'Необходимо согласие для участия в квизе';
+    err.style.display = 'block';
     return;
   }
-  $('consentErr').style.display = 'none';
+  err.style.display = 'none';
+  userData = { name: '', department: '', consent };
   startQuiz();
 });
 
+/* ===== QUIZ ===== */
 function startQuiz() {
-  showScreen('s-quiz');
-  $('kbHint').classList.add('show');
-  buildDots();
-  renderQ(0, 'none');
+  cur = 0;
+  answers = new Array(TOTAL).fill(null);
+  renderDots();
+  renderQuestion(true);
+  show('s-quiz');
+  document.getElementById('kbHint').classList.add('show');
 }
 
-/* ===== Screen 3: Quiz Engine ===== */
-function buildDots() {
-  const wrap = $('dots');
-  while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+function renderDots() {
+  const wrap = document.getElementById('dots');
+  wrap.innerHTML = '';
   for (let i = 0; i < TOTAL; i++) {
     const d = document.createElement('div');
-    d.className = 'step-dot';
-    d.setAttribute('role', 'button');
-    d.setAttribute('aria-label', '\u0412\u043E\u043F\u0440\u043E\u0441 ' + (i + 1));
-    d.addEventListener('click', () => { if (i <= answers.length) navTo(i); });
+    d.className = 'step-dot' + (i < cur ? ' done' : i === cur ? ' active' : '');
+    d.addEventListener('click', () => {
+      if (i < cur) goBack(cur - i);
+    });
     wrap.appendChild(d);
   }
-  syncDots();
 }
 
-function syncDots() {
-  const dots = $('dots').children;
-  for (let i = 0; i < dots.length; i++) {
-    dots[i].className = 'step-dot';
-    if (i < cur) dots[i].classList.add('done');
-    if (i === cur) dots[i].classList.add('active');
+function updateProgress() {
+  document.getElementById('qNum').textContent = cur + 1;
+  document.getElementById('pFill').style.width = ((cur + 1) / TOTAL * 100) + '%';
+  renderDots();
+}
+
+function getQuestionOptions(q) {
+  if (q.dynamic) {
+    const bType = answers[0] || 'b2c';
+    return getIndustryOptions(bType).map(name => ({ text: name, value: name }));
   }
+  return q.options;
 }
 
-function renderQ(idx, dir) {
-  cur = idx;
-  const q = questions[idx];
-  const card = $('qCard');
+function renderQuestion(forward) {
+  clearTimeout(autoTimer);
+  const q = QUESTIONS[cur];
+  const card = document.getElementById('qCard');
+  const direction = forward ? 'fwd' : 'back';
 
-  if (dir !== 'none') {
-    const exitCls = dir === 'forward' ? 'exit-fwd' : 'exit-back';
-    const enterCls = dir === 'forward' ? 'enter-fwd' : 'enter-back';
-    card.classList.add(exitCls);
-    setTimeout(() => {
-      fillQuestion(q, idx);
-      card.classList.remove(exitCls);
-      card.classList.add(enterCls);
+  card.classList.remove('exit-fwd', 'exit-back', 'enter-fwd', 'enter-back');
+  card.classList.add('exit-' + direction);
+
+  setTimeout(() => {
+    card.classList.remove('exit-fwd', 'exit-back');
+    card.classList.add('enter-' + direction);
+    buildQuestion(q);
+    updateProgress();
+
+    requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => card.classList.remove(enterCls));
+        card.classList.remove('enter-fwd', 'enter-back');
       });
-    }, 200);
-  } else {
-    fillQuestion(q, idx);
-  }
+    });
+  }, 280);
 
-  $('qNum').textContent = idx + 1;
-  $('pFill').style.width = ((idx + 1) / TOTAL * 100) + '%';
-  syncDots();
-  syncNav();
+  const prevBtn = document.getElementById('btnPrev');
+  prevBtn.classList.toggle('hidden', cur === 0);
 }
 
-function fillQuestion(q, idx) {
-  $('qText').textContent = q.text;
-  const area = $('opts');
-  while (area.firstChild) area.removeChild(area.firstChild);
-  const sel = answers[idx] !== undefined ? answers[idx] : -1;
+function buildQuestion(q) {
+  document.getElementById('qText').textContent = q.text;
+  const opts = document.getElementById('opts');
+  opts.innerHTML = '';
+  opts.className = q.grid ? 'options options-grid' : 'options';
 
-  q.options.forEach((opt, i) => {
+  const options = getQuestionOptions(q);
+  options.forEach((opt, i) => {
     const el = document.createElement('div');
-    el.className = 'option' + (i === sel ? ' selected' : '');
-    el.setAttribute('role', 'button');
-    el.setAttribute('tabindex', '0');
-    el.setAttribute('aria-label', MARKERS[i] + '. ' + opt.text);
+    el.className = 'option' + (answers[cur] === opt.value ? ' selected' : '');
+    el.dataset.value = opt.value;
 
-    const marker = document.createElement('div');
-    marker.className = 'option-marker';
-    marker.textContent = MARKERS[i];
-
-    const span = document.createElement('span');
-    span.textContent = opt.text;
-
-    el.appendChild(marker);
-    el.appendChild(span);
-    el.addEventListener('click', () => selectOpt(i, el));
-    area.appendChild(el);
-  });
-}
-
-function selectOpt(idx, el) {
-  clearTimeout(autoTimer);
-  const opts = $('opts').children;
-  for (let i = 0; i < opts.length; i++) opts[i].classList.remove('selected');
-
-  el.classList.add('selected', 'flash');
-  answers[cur] = idx;
-  syncNav();
-
-  const hint = $('autoHint');
-  if (cur < TOTAL - 1) {
-    hint.textContent = '\u0410\u0432\u0442\u043E\u043F\u0435\u0440\u0435\u0445\u043E\u0434 \u0447\u0435\u0440\u0435\u0437 \u0441\u0435\u043A\u0443\u043D\u0434\u0443...';
-    hint.classList.add('show');
-    autoTimer = setTimeout(() => {
-      hint.classList.remove('show');
-      nextQ();
-    }, 800);
-  } else {
-    hint.textContent = '\u041D\u0430\u0436\u043C\u0438\u0442\u0435 \u00AB\u0420\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B\u00BB \u0434\u043B\u044F \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u0438\u044F';
-    hint.classList.add('show');
-    setTimeout(() => hint.classList.remove('show'), 2000);
-  }
-}
-
-function syncNav() {
-  const bp = $('btnPrev');
-  const bn = $('btnNextQ');
-  if (cur > 0) bp.classList.remove('hidden'); else bp.classList.add('hidden');
-  bn.disabled = answers[cur] === undefined;
-  bn.textContent = cur === TOTAL - 1 ? '\u0420\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u044B \u2192' : '\u0414\u0430\u043B\u0435\u0435 \u2192';
-}
-
-function nextQ() {
-  clearTimeout(autoTimer);
-  $('autoHint').classList.remove('show');
-  if (answers[cur] === undefined) return;
-  if (cur < TOTAL - 1) renderQ(cur + 1, 'forward');
-}
-
-function prevQ() {
-  clearTimeout(autoTimer);
-  $('autoHint').classList.remove('show');
-  if (cur > 0) renderQ(cur - 1, 'back');
-}
-
-function navTo(idx) {
-  clearTimeout(autoTimer);
-  $('autoHint').classList.remove('show');
-  renderQ(idx, idx > cur ? 'forward' : idx < cur ? 'back' : 'none');
-}
-
-$('btnNextQ').addEventListener('click', () => {
-  if (cur === TOTAL - 1) showBeta(); else nextQ();
-});
-$('btnPrev').addEventListener('click', prevQ);
-
-/* ===== Screen 4: Beta Testing ===== */
-function showBeta() {
-  clearTimeout(autoTimer);
-  $('kbHint').classList.remove('show');
-  const el = $('s-beta');
-  while (el.firstChild) el.removeChild(el.firstChild);
-
-  const h2 = document.createElement('h2');
-  h2.textContent = 'Хотите принять участие в бета-тестировании наших продуктов?';
-  el.appendChild(h2);
-
-  const sub = document.createElement('p');
-  sub.style.cssText = 'font-size:15px;color:#6B7280;margin-bottom:32px;margin-top:8px';
-  sub.textContent = 'Вы одними из первых попробуете новые AI-функции Halyk Bank';
-  el.appendChild(sub);
-
-  // Contact form (hidden until "Да")
-  const form = document.createElement('div');
-  form.style.cssText = 'display:none;width:100%';
-
-  const formTitle = document.createElement('p');
-  formTitle.style.cssText = 'font-size:14px;color:#6B7280;margin-bottom:16px';
-  formTitle.textContent = 'Оставьте хотя бы один контакт — мы свяжемся с вами:';
-  form.appendChild(formTitle);
-
-  const phoneGroup = document.createElement('div');
-  phoneGroup.className = 'form-group';
-  const phoneLabel = document.createElement('label');
-  phoneLabel.className = 'form-label';
-  phoneLabel.textContent = 'Телефон';
-  const phoneInput = document.createElement('input');
-  phoneInput.type = 'tel';
-  phoneInput.className = 'form-input';
-  phoneInput.placeholder = '+7 (___) ___-__-__';
-  phoneGroup.appendChild(phoneLabel);
-  phoneGroup.appendChild(phoneInput);
-  form.appendChild(phoneGroup);
-
-  const emailGroup = document.createElement('div');
-  emailGroup.className = 'form-group';
-  const emailLabel = document.createElement('label');
-  emailLabel.className = 'form-label';
-  emailLabel.textContent = 'Email';
-  const emailInput = document.createElement('input');
-  emailInput.type = 'email';
-  emailInput.className = 'form-input';
-  emailInput.placeholder = 'you@example.com';
-  emailGroup.appendChild(emailLabel);
-  emailGroup.appendChild(emailInput);
-  form.appendChild(emailGroup);
-
-  const contactErr = document.createElement('div');
-  contactErr.style.cssText = 'color:#ef4444;font-size:12px;margin-top:4px;display:none';
-  contactErr.textContent = 'Укажите телефон или email';
-  form.appendChild(contactErr);
-
-  const btnSend = document.createElement('button');
-  btnSend.className = 'btn-primary';
-  btnSend.style.cssText = 'width:100%;margin-top:20px;justify-content:center';
-  btnSend.textContent = 'Продолжить';
-  btnSend.addEventListener('click', () => {
-    const phone = phoneInput.value.trim();
-    const email = emailInput.value.trim();
-    if (!phone && !email) { contactErr.style.display = 'block'; return; }
-    contactErr.style.display = 'none';
-    betaData = { interest: true, phone: phone || null, email: email || null };
-    showResults();
-  });
-  form.appendChild(btnSend);
-  el.appendChild(form);
-
-  // Yes / No buttons
-  const btnRow = document.createElement('div');
-  btnRow.className = 'btn-row';
-
-  const btnYes = document.createElement('button');
-  btnYes.className = 'btn-primary';
-  btnYes.textContent = 'Да, хочу';
-  btnYes.addEventListener('click', () => {
-    btnRow.style.display = 'none';
-    form.style.display = 'block';
-    phoneInput.focus();
-  });
-
-  const btnNo = document.createElement('button');
-  btnNo.className = 'btn-outline';
-  btnNo.textContent = 'Нет, спасибо';
-  btnNo.addEventListener('click', () => {
-    betaData = { interest: false, phone: null, email: null };
-    showResults();
-  });
-
-  btnRow.appendChild(btnYes);
-  btnRow.appendChild(btnNo);
-  el.appendChild(btnRow);
-
-  showScreen('s-beta');
-}
-
-/* ===== Screen 5: Results ===== */
-function calcScores() {
-  const sc = { tax_adviser: 0, voice: 0, chat: 0 };
-  const pr = { visionary: 0, pragmatist: 0, optimizer: 0 };
-  answers.forEach((a, qi) => {
-    const o = questions[qi].options[a];
-    for (const k in o.scores) sc[k] += o.scores[k];
-    for (const k in o.profile) pr[k] += o.profile[k];
-  });
-  return { productScores: sc, profileScores: pr };
-}
-
-function showResults() {
-  clearTimeout(autoTimer);
-  $('kbHint').classList.remove('show');
-
-  const { productScores, profileScores } = calcScores();
-  const topProfile = Object.entries(profileScores).sort((a, b) => b[1] - a[1])[0][0];
-  const prof = profiles[topProfile];
-  const maxP = Math.max(...Object.values(profileScores));
-  const sorted = Object.entries(productScores).sort((a, b) => b[1] - a[1]);
-  const maxS = Math.max(...Object.values(productScores));
-  const tags = ['\u041C\u0430\u043A\u0441\u0438\u043C\u0430\u043B\u044C\u043D\u044B\u0439 \u044D\u0444\u0444\u0435\u043A\u0442', '\u0420\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0443\u0435\u043C \u0440\u0430\u0441\u0441\u043C\u043E\u0442\u0440\u0435\u0442\u044C', '\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u0430\u044F \u043E\u043F\u0446\u0438\u044F'];
-
-  const el = $('s-results');
-  while (el.firstChild) el.removeChild(el.firstChild);
-
-  // Profile header
-  const head = document.createElement('div');
-  head.className = 'results-head';
-
-  const emojiDiv = document.createElement('div');
-  emojiDiv.className = 'emoji';
-  emojiDiv.textContent = prof.emoji;
-  head.appendChild(emojiDiv);
-
-  const h2 = document.createElement('h2');
-  h2.textContent = '\u0412\u044B \u2014 ' + prof.name;
-  head.appendChild(h2);
-
-  const descP = document.createElement('p');
-  descP.textContent = prof.desc;
-  head.appendChild(descP);
-  el.appendChild(head);
-
-  // Profile percentage bars
-  const bars = document.createElement('div');
-  bars.className = 'profile-bars';
-  Object.entries(profileScores).sort((a, b) => b[1] - a[1]).forEach(([k, v]) => {
-    const p = profiles[k];
-    const pct = maxP > 0 ? Math.round((v / maxP) * 100) : 0;
-    const isTop = k === topProfile;
-    const bar = document.createElement('div');
-    bar.className = 'profile-bar' + (isTop ? ' top' : '');
-
-    const nm = document.createElement('div');
-    nm.className = 'pname';
-    nm.textContent = p.emoji + ' ' + p.name;
-    if (isTop) nm.style.color = p.color;
-    bar.appendChild(nm);
-
-    const val = document.createElement('div');
-    val.className = 'pval';
-    val.textContent = pct + '%';
-    bar.appendChild(val);
-    bars.appendChild(bar);
-  });
-  el.appendChild(bars);
-
-  // Products label
-  const lbl = document.createElement('div');
-  lbl.className = 'section-label';
-  lbl.textContent = '\u0420\u0435\u0448\u0435\u043D\u0438\u044F \u0434\u043B\u044F \u0432\u0430\u0441';
-  el.appendChild(lbl);
-
-  // Product cards
-  sorted.forEach(([key, score], i) => {
-    const p = products[key];
-    const pct = maxS > 0 ? Math.round((score / maxS) * 100) : 0;
-
-    const card = document.createElement('div');
-    card.className = 'r-card rank-' + (i + 1);
-    card.style.transitionDelay = ((i + 1) * 0.15) + 's';
-
-    const rank = document.createElement('div');
-    rank.className = 'r-rank';
-
-    const tag = document.createElement('span');
-    tag.className = 'r-tag';
-    tag.textContent = tags[i];
-    rank.appendChild(tag);
-
-    const sbar = document.createElement('div');
-    sbar.className = 'score-bar';
-    const sfill = document.createElement('div');
-    sfill.className = 'score-fill';
-    sfill.dataset.w = pct;
-    sbar.appendChild(sfill);
-    rank.appendChild(sbar);
-    card.appendChild(rank);
-
-    const h3 = document.createElement('h3');
-    h3.textContent = p.icon + ' ' + p.name;
-    card.appendChild(h3);
-
-    const desc = document.createElement('p');
-    desc.className = 'desc';
-    desc.textContent = p.desc;
-    card.appendChild(desc);
-
-    if (i === 0) {
-      const ins = document.createElement('p');
-      ins.className = 'r-insight';
-      ins.textContent = p.insight;
-      card.appendChild(ins);
+    if (q.markers) {
+      const marker = document.createElement('div');
+      marker.className = 'option-marker';
+      marker.textContent = MARKERS[i] || (i + 1);
+      el.appendChild(marker);
     }
 
-    const status = document.createElement('div');
-    status.className = 'r-status';
-    const dot = document.createElement('span');
-    dot.className = 'dot';
-    status.appendChild(dot);
-    const stxt = document.createTextNode(p.status);
-    status.appendChild(stxt);
-    card.appendChild(status);
+    const text = document.createElement('span');
+    text.textContent = opt.text;
+    el.appendChild(text);
 
-    el.appendChild(card);
+    el.addEventListener('click', () => selectOption(opt.value, el));
+    opts.appendChild(el);
   });
 
-  // CTA row
-  const footer = document.createElement('div');
-  footer.style.cssText = 'text-align:center;margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,.06)';
+  const nextBtn = document.getElementById('btnNextQ');
+  nextBtn.disabled = answers[cur] === null;
+  nextBtn.textContent = cur === TOTAL - 1 ? 'Далее' : 'Далее';
 
-  const fP = document.createElement('p');
-  fP.style.cssText = 'font-size:14px;color:#6B7280;margin-bottom:16px';
-  fP.textContent = '\u0425\u043E\u0442\u0438\u0442\u0435 \u0443\u0437\u043D\u0430\u0442\u044C \u0431\u043E\u043B\u044C\u0448\u0435? \u041F\u043E\u0433\u043E\u0432\u043E\u0440\u0438\u0442\u0435 \u0441 \u043D\u0430\u0448\u0435\u0439 \u043A\u043E\u043C\u0430\u043D\u0434\u043E\u0439 \u043D\u0430 \u0441\u0442\u0435\u043D\u0434\u0435.';
-  footer.appendChild(fP);
+  document.getElementById('autoHint').classList.remove('show');
+}
 
-  const btnFinish = document.createElement('button');
-  btnFinish.className = 'btn-primary';
-  btnFinish.style.cssText = 'width:100%;max-width:320px;justify-content:center;margin:0 auto';
-  btnFinish.textContent = 'Завершить';
-  btnFinish.addEventListener('click', () => {
-    if (submitted) return;
-    submitted = true;
-    btnFinish.disabled = true;
-    submitPromise.then(res => goToThanks(res));
-  });
-  footer.appendChild(btnFinish);
-  el.appendChild(footer);
+function selectOption(value, el) {
+  answers[cur] = value;
+  document.querySelectorAll('#opts .option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  el.classList.add('flash');
+  el.addEventListener('animationend', () => el.classList.remove('flash'), { once: true });
 
-  // Auto-save in background immediately
-  const submitPromise = doSubmit(productScores, profileScores, topProfile, sorted[0][0]);
+  document.getElementById('btnNextQ').disabled = false;
+  document.getElementById('autoHint').classList.add('show');
 
-  showScreen('s-results');
+  clearTimeout(autoTimer);
+  autoTimer = setTimeout(() => advanceQuestion(), 1000);
+}
 
-  // Animate cards + score bars
-  setTimeout(() => {
-    el.querySelectorAll('.r-card').forEach((c, i) => {
-      setTimeout(() => c.classList.add('vis'), i * 150);
+function advanceQuestion() {
+  clearTimeout(autoTimer);
+  if (answers[cur] === null) return;
+  if (cur < TOTAL - 1) {
+    cur++;
+    renderQuestion(true);
+  } else {
+    showOpenQuestions();
+  }
+}
+
+function goBack(steps = 1) {
+  clearTimeout(autoTimer);
+  cur = Math.max(0, cur - steps);
+  renderQuestion(false);
+}
+
+document.getElementById('btnNextQ').addEventListener('click', advanceQuestion);
+document.getElementById('btnPrev').addEventListener('click', () => goBack(1));
+
+/* ===== OPEN QUESTIONS ===== */
+function showOpenQuestions() {
+  document.getElementById('kbHint').classList.remove('show');
+  show('s-open');
+}
+
+document.getElementById('btnGetRec').addEventListener('click', () => {
+  openAnswers.q6 = document.getElementById('openQ6').value.trim();
+  openAnswers.q7 = document.getElementById('openQ7').value.trim();
+  startLoadingAndRecommend();
+});
+
+document.getElementById('btnSkipOpen').addEventListener('click', () => {
+  openAnswers.q6 = '';
+  openAnswers.q7 = '';
+  startLoadingAndRecommend();
+});
+
+/* ===== LOADING & RECOMMEND ===== */
+function startLoadingAndRecommend() {
+  show('s-loading');
+  animateLoadingSteps();
+
+  const bType    = answers[0];
+  const industry = answers[1];
+  const q3       = answers[2];
+  const q4       = answers[3];
+  const q5       = answers[4];
+
+  const payload = {
+    business_type: bType,
+    industry: industry,
+    company_size: q3,
+    priority: q4,
+    digital_level: q5,
+    open_q6: openAnswers.q6,
+    open_q7: openAnswers.q7,
+    user_name: userData.name,
+  };
+
+  fetch(CONFIG.RECOMMEND_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(data => {
+      recommendResult = data;
+      setTimeout(() => showResults(data), 1800);
+    })
+    .catch(() => {
+      recommendResult = null;
+      setTimeout(() => showResults(null), 1800);
     });
+}
+
+function animateLoadingSteps() {
+  const steps = ['step0', 'step1', 'step2'];
+  steps.forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('active', 'done');
+  });
+
+  const delays = [0, 800, 1600];
+  steps.forEach((id, i) => {
     setTimeout(() => {
-      el.querySelectorAll('.score-fill').forEach(b => { b.style.width = b.dataset.w + '%'; });
-    }, 300);
+      if (i > 0) {
+        document.getElementById(steps[i - 1]).classList.remove('active');
+        document.getElementById(steps[i - 1]).classList.add('done');
+      }
+      document.getElementById(id).classList.add('active');
+    }, delays[i]);
+  });
+}
+
+/* ===== RESULTS ===== */
+function showResults(aiData) {
+  const bType    = answers[0];
+  const industry = answers[1];
+  const q3       = answers[2];
+  const q4       = answers[3];
+  const q5       = answers[4];
+  const top3     = computeTop3(bType, industry, q3, q4, q5);
+
+  const trend = AI_TRENDS[industry] || 'AI трансформирует бизнес во всех отраслях';
+
+  const aiProducts = aiData && aiData.ai_products ? aiData.ai_products : [];
+
+  const rankLabels  = ['#1', '#2', '#3'];
+  const rankClasses = ['rank-1', 'rank-2', 'rank-3'];
+  const rankBars    = [100, 75, 55];
+
+  let cards = '';
+  top3.forEach((key, i) => {
+    const prod = PRODUCTS[key] || { name: key, desc: '', icon: '📦' };
+    const aiEntry = aiProducts.find(p => p.key === key || p.product === key);
+    const reason  = aiEntry && aiEntry.reason ? aiEntry.reason : (aiData && aiData.summary ? '' : '');
+
+    cards += `
+      <div class="r-card ${rankClasses[i]}" id="rcard${i}">
+        <div class="r-rank">
+          <span class="r-tag">${rankLabels[i]}</span>
+          <div class="score-bar"><div class="score-fill" id="sfill${i}" style="width:0%"></div></div>
+        </div>
+        <h3>${prod.icon} ${prod.name}</h3>
+        <div class="desc">${prod.desc}</div>
+        ${reason ? `<div class="product-reason">${reason}</div>` : ''}
+      </div>`;
+  });
+
+  const summaryHtml = aiData && aiData.summary
+    ? `<div style="margin-top:16px;padding:16px 20px;background:rgba(255,255,255,.03);border-radius:var(--radius-md);font-size:14px;color:var(--text-muted);line-height:1.7;font-style:italic">${aiData.summary}</div>`
+    : '';
+
+  const html = `
+    <div class="results-head">
+      <div class="emoji">🎯</div>
+      <h2>Ваши топ-3 продукта Халык Банка</h2>
+      <p>На основе вашего профиля и AI-анализа</p>
+    </div>
+    <div class="section-label">Рекомендации</div>
+    ${cards}
+    ${summaryHtml}
+    <div class="ai-trend-box">
+      <div class="ai-trend-label">📊 Тренд отрасли</div>
+      <div class="ai-trend-text">${trend}</div>
+    </div>
+    <span class="stand-cta">→ Узнайте больше у менеджера на стенде</span>
+    <div style="margin-top:28px;text-align:center">
+      <button class="btn-primary" id="btnFinish" style="width:100%;justify-content:center">Завершить</button>
+    </div>`;
+
+  const screen = document.getElementById('s-results');
+  screen.innerHTML = html;
+  show('s-results');
+
+  // Animate cards in
+  setTimeout(() => {
+    top3.forEach((_, i) => {
+      setTimeout(() => {
+        const card = document.getElementById('rcard' + i);
+        if (card) card.classList.add('vis');
+        const fill = document.getElementById('sfill' + i);
+        if (fill) fill.style.width = rankBars[i] + '%';
+      }, i * 150);
+    });
   }, 100);
+
+  document.getElementById('btnFinish').addEventListener('click', () => {
+    showBeta(top3);
+  });
 
   launchConfetti();
 }
 
-/* ===== API Submit ===== */
-async function doSubmit(productScores, profileScores, profile, recommendedProduct) {
+/* ===== BETA ===== */
+function showBeta(top3) {
+  const screen = document.getElementById('s-beta');
+  screen.innerHTML = `
+    <div class="beta-screen">
+      <div style="font-size:40px;margin-bottom:16px">🚀</div>
+      <h2>Бета-тестирование</h2>
+      <p class="beta-sub">Хотите принять участие в бета-тестировании наших продуктов и получить эксклюзивный ранний доступ?</p>
+      <div class="beta-choices">
+        <button class="beta-choice" id="betaYes">Да, хочу участвовать</button>
+        <button class="beta-choice" id="betaNo">Нет, спасибо</button>
+      </div>
+      <div class="beta-form" id="betaForm">
+        <div class="form-group">
+          <label class="form-label">Телефон</label>
+          <input type="tel" id="betaPhone" class="form-input" placeholder="+7 700 000 00 00" autocomplete="tel">
+        </div>
+        <div class="form-group">
+          <label class="form-label">E-mail</label>
+          <input type="email" id="betaEmail" class="form-input" placeholder="you@company.kz" autocomplete="email">
+        </div>
+        <button class="btn-primary" id="btnBetaContinue" style="width:100%;justify-content:center;margin-top:4px">Продолжить</button>
+      </div>
+    </div>`;
+
+  show('s-beta');
+
+  document.getElementById('betaYes').addEventListener('click', () => {
+    betaData.interest = true;
+    document.getElementById('betaYes').classList.add('selected');
+    document.getElementById('betaNo').classList.remove('selected');
+    document.getElementById('betaForm').classList.add('show');
+  });
+
+  document.getElementById('betaNo').addEventListener('click', () => {
+    betaData.interest = false;
+    document.getElementById('betaNo').classList.add('selected');
+    document.getElementById('betaYes').classList.remove('selected');
+    document.getElementById('betaForm').classList.remove('show');
+    doFinalSubmit(top3);
+  });
+
+  document.getElementById('btnBetaContinue').addEventListener('click', () => {
+    betaData.phone = document.getElementById('betaPhone').value.trim();
+    betaData.email = document.getElementById('betaEmail').value.trim();
+    doFinalSubmit(top3);
+  });
+}
+
+/* ===== FINAL SUBMIT ===== */
+function doFinalSubmit(top3) {
+  if (submitted) { goToThanks(); return; }
+  submitted = true;
+
   const payload = {
-    user_name: userData.name,
-    department: userData.department,
-    consent: userData.consent,
-    answers: answers.slice(),
-    product_scores: productScores,
-    profile_scores: profileScores,
-    recommended_product: recommendedProduct,
-    profile: profile,
-    device: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
-    duration_ms: Date.now() - startTime,
-    beta_interest: betaData.interest,
-    beta_phone: betaData.phone,
-    beta_email: betaData.email
+    business_type:    answers[0],
+    industry:         answers[1],
+    company_size:     answers[2],
+    priority:         answers[3],
+    digital_level:    answers[4],
+    open_q6:          openAnswers.q6,
+    open_q7:          openAnswers.q7,
+    user_name:        userData.name,
+    department:       userData.department,
+    consent:          userData.consent,
+    top3_products:    top3,
+    ai_recommendation: recommendResult ? (recommendResult.ai_products || null) : null,
+    used_ai:          recommendResult ? (recommendResult.used_ai || false) : false,
+    beta_interest:    betaData.interest,
+    beta_phone:       betaData.phone,
+    beta_email:       betaData.email,
+    device:           /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+    duration_ms:      Date.now() - startTime,
   };
 
-  // Try Edge Function first
-  try {
-    const res = await fetch(CONFIG.EDGE_FUNCTION_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (res.ok) return await res.json();
-  } catch (e) {
-    console.warn('Edge Function unavailable, queuing offline');
-  }
-
-  // Offline: queue in localStorage for later retry via Edge Function
-  const pending = JSON.parse(localStorage.getItem('quiz_pending') || '[]');
-  pending.push({ ...payload, queued_at: new Date().toISOString() });
-  localStorage.setItem('quiz_pending', JSON.stringify(pending));
-  return null;
+  fetch(CONFIG.SUBMIT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(data => goToThanks(data && data.participant_number))
+    .catch(() => goToThanks());
 }
 
-/* ===== Screen 5: Thank You ===== */
-function goToThanks(apiResult) {
-  const el = $('s-thanks');
-  while (el.firstChild) el.removeChild(el.firstChild);
+/* ===== THANKS ===== */
+function goToThanks(participantNum) {
+  const screen = document.getElementById('s-thanks');
+  const numHtml = participantNum
+    ? `<p class="participant">Вы участник <strong>#${participantNum}</strong></p>`
+    : `<p class="participant" style="color:var(--text-dim)">Спасибо за прохождение квиза!</p>`;
 
-  const emoji = document.createElement('div');
-  emoji.className = 'emoji';
-  emoji.textContent = '\uD83C\uDF89';
-  el.appendChild(emoji);
+  screen.innerHTML = `
+    <div class="emoji">🎉</div>
+    <h2>Спасибо!</h2>
+    ${numHtml}
+    <p style="font-size:14px;color:var(--text-dim);margin-bottom:36px;line-height:1.7">
+      Ваши результаты сохранены. Подойдите к менеджеру на стенде Halyk Bank — покажите рекомендации и узнайте подробности.
+    </p>
+    <div class="thanks-btns">
+      <button class="btn-primary" id="btnRestart">Пройти ещё раз</button>
+    </div>`;
 
-  const h2 = document.createElement('h2');
-  h2.textContent = '\u0421\u043F\u0430\u0441\u0438\u0431\u043E \u0437\u0430 \u0443\u0447\u0430\u0441\u0442\u0438\u0435!';
-  el.appendChild(h2);
+  show('s-thanks');
 
-  const part = document.createElement('p');
-  part.className = 'participant';
-  if (apiResult && apiResult.participant_number) {
-    part.innerHTML = '';
-    const t1 = document.createTextNode('\u0412\u044B \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A #');
-    const strong = document.createElement('strong');
-    strong.textContent = apiResult.participant_number;
-    part.appendChild(t1);
-    part.appendChild(strong);
-  } else {
-    part.textContent = '\u0412\u0430\u0448 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442 \u0441\u043E\u0445\u0440\u0430\u043D\u0451\u043D';
-  }
-  el.appendChild(part);
-
-  const btns = document.createElement('div');
-  btns.className = 'thanks-btns';
-
-  // Share button
-  if (navigator.share) {
-    const shareBtn = document.createElement('button');
-    shareBtn.className = 'btn-primary';
-    shareBtn.textContent = '\u041F\u043E\u0434\u0435\u043B\u0438\u0442\u044C\u0441\u044F';
-    shareBtn.addEventListener('click', () => {
-      navigator.share({
-        title: 'Halyk AI Quiz',
-        text: '\u042F \u043F\u0440\u043E\u0448\u0451\u043B \u0418\u0418-\u043A\u0432\u0438\u0437 Halyk Bank \u043D\u0430 Demo Day 2026!',
-        url: location.href
-      }).catch(() => {});
-    });
-    btns.appendChild(shareBtn);
-  }
-
-  // Restart button
-  const restartBtn = document.createElement('button');
-  restartBtn.className = 'btn-outline';
-  restartBtn.textContent = '\u041F\u0440\u043E\u0439\u0442\u0438 \u0437\u0430\u043D\u043E\u0432\u043E';
-  restartBtn.addEventListener('click', restart);
-  btns.appendChild(restartBtn);
-  el.appendChild(btns);
-
-  // Link
-  const link = document.createElement('a');
-  link.className = 'thanks-link';
-  link.href = 'https://halykbank.kz';
-  link.target = '_blank';
-  link.rel = 'noopener';
-  link.textContent = '\u041F\u043E\u0434\u0440\u043E\u0431\u043D\u0435\u0435 \u043D\u0430 halykbank.kz \u2192';
-  el.appendChild(link);
-
-  showScreen('s-thanks');
+  document.getElementById('btnRestart').addEventListener('click', () => {
+    resetAll();
+    show('s-landing');
+  });
 }
 
-function restart() {
+function resetAll() {
   cur = 0;
-  answers = [];
+  answers = new Array(TOTAL).fill(null);
+  openAnswers = { q6: '', q7: '' };
+  userData = { name: '', department: '', consent: false };
+  betaData = { interest: null, phone: '', email: '' };
+  recommendResult = null;
   submitted = false;
-  userData = { name: null, department: null, consent: false };
-  betaData = { interest: false, phone: null, email: null };
-  clearTimeout(autoTimer);
-  $('userName').value = '';
-  $('userDept').value = '';
-  $('consentCheck').checked = false;
-  $('consentErr').style.display = 'none';
-  showScreen('s-landing');
+  startTime = Date.now();
+  document.getElementById('userName').value = '';
+  document.getElementById('userDept').value = '';
+  document.getElementById('consentCheck').checked = false;
+  document.getElementById('consentErr').style.display = 'none';
+  document.getElementById('openQ6').value = '';
+  document.getElementById('openQ7').value = '';
 }
 
-/* ===== Confetti ===== */
+/* ===== CONFETTI ===== */
 function launchConfetti() {
   const wrap = document.createElement('div');
   wrap.className = 'confetti-wrap';
   document.body.appendChild(wrap);
-  const colors = ['#068C6E', '#0AAE8A', '#F9B000', '#FFD166', '#FFFFFF'];
+  const colors = ['#068C6E', '#0AAE8A', '#F9B000', '#FFD166', '#ffffff'];
   for (let i = 0; i < 60; i++) {
-    const p = document.createElement('div');
-    p.className = 'confetti';
-    p.style.left = Math.random() * 100 + '%';
-    p.style.background = colors[Math.floor(Math.random() * colors.length)];
-    p.style.width = (Math.random() * 6 + 4) + 'px';
-    p.style.height = (Math.random() * 6 + 4) + 'px';
-    p.style.animationDuration = (Math.random() * 2 + 2) + 's';
-    p.style.animationDelay = (Math.random() * 1.5) + 's';
-    p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-    wrap.appendChild(p);
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + '%';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.animationDuration = (2 + Math.random() * 3) + 's';
+    c.style.animationDelay = Math.random() * 1.5 + 's';
+    wrap.appendChild(c);
   }
-  setTimeout(() => wrap.remove(), 5000);
+  setTimeout(() => wrap.remove(), 6000);
 }
 
-/* ===== Keyboard Navigation ===== */
-document.addEventListener('keydown', (e) => {
-  if (!$('s-quiz').classList.contains('active')) return;
-  if (e.key >= '1' && e.key <= '4') {
-    const idx = parseInt(e.key) - 1;
-    const opts = $('opts').children;
-    if (idx < opts.length) selectOpt(idx, opts[idx]);
-  }
-  if (e.key === 'ArrowRight' || e.key === 'Enter') {
-    e.preventDefault();
-    if (cur === TOTAL - 1 && answers[cur] !== undefined) showResults(); else nextQ();
-  }
-  if (e.key === 'ArrowLeft') { e.preventDefault(); prevQ(); }
-});
+/* ===== KEYBOARD NAVIGATION ===== */
+document.addEventListener('keydown', e => {
+  const active = document.querySelector('.screen.active');
+  if (!active) return;
 
-/* ===== Flush pending submissions ===== */
-(function flushPending() {
-  const pending = JSON.parse(localStorage.getItem('quiz_pending') || '[]');
-  if (!pending.length || CONFIG.EDGE_FUNCTION_URL.indexOf('supabase.co') === -1) return;
-  const remaining = [];
-  Promise.allSettled(pending.map(p =>
-    fetch(CONFIG.EDGE_FUNCTION_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(p)
-    }).then(r => { if (!r.ok) throw new Error(); })
-      .catch(() => { remaining.push(p); })
-  )).then(() => {
-    if (remaining.length) localStorage.setItem('quiz_pending', JSON.stringify(remaining));
-    else localStorage.removeItem('quiz_pending');
-  });
-})();
+  if (active.id === 's-quiz') {
+    const q = QUESTIONS[cur];
+    const opts = getQuestionOptions(q);
+
+    if (e.key >= '1' && e.key <= '9') {
+      const idx = parseInt(e.key) - 1;
+      if (idx < opts.length) {
+        const el = document.querySelectorAll('#opts .option')[idx];
+        if (el) el.click();
+      }
+    }
+    if (e.key === 'ArrowRight' || e.key === 'Enter') {
+      if (answers[cur] !== null) advanceQuestion();
+    }
+    if (e.key === 'ArrowLeft') {
+      if (cur > 0) goBack(1);
+    }
+  }
+
+  if (active.id === 's-landing' && e.key === 'Enter') {
+    document.getElementById('btnStart').click();
+  }
+});
 </script>
 </body>
 </html>
