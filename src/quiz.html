@@ -275,22 +275,6 @@ textarea.form-input{resize:none;line-height:1.5;min-height:90px}
       <label class="form-label" for="userName">Имя</label>
       <input type="text" id="userName" class="form-input" placeholder="Как вас зовут?" maxlength="100" autocomplete="given-name">
     </div>
-    <div class="form-group">
-      <label class="form-label" for="userDept">Отдел / Должность</label>
-      <select id="userDept" class="form-select">
-        <option value="">Выберите отдел</option>
-        <option>IT</option>
-        <option>Розничный бизнес</option>
-        <option>Корпоративный бизнес</option>
-        <option>HR</option>
-        <option>Финансы</option>
-        <option>Риски</option>
-        <option>Маркетинг</option>
-        <option>Операции</option>
-        <option>Юридический</option>
-        <option>Другой</option>
-      </select>
-    </div>
     <label class="consent-row" id="consentRow">
       <input type="checkbox" id="consentCheck">
       <span class="consent-text">Я согласен(на) на обработку персональных данных и получение результатов квиза</span>
@@ -582,7 +566,6 @@ document.getElementById('btnStart').addEventListener('click', () => {
 /* ===== INFO SCREEN ===== */
 document.getElementById('btnContinue').addEventListener('click', () => {
   const name = document.getElementById('userName').value.trim();
-  const dept = document.getElementById('userDept').value;
   const consent = document.getElementById('consentCheck').checked;
   const err = document.getElementById('consentErr');
 
@@ -591,7 +574,7 @@ document.getElementById('btnContinue').addEventListener('click', () => {
     return;
   }
   err.style.display = 'none';
-  userData = { name, department: dept, consent };
+  userData = { name, department: '', consent };
   startQuiz();
 });
 

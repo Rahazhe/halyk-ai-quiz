@@ -60,6 +60,7 @@ serve(async (req: Request) => {
   // Optional text fields
   const open_q6 = body.open_q6 ? sanitize(String(body.open_q6), 500) : null;
   const open_q7 = body.open_q7 ? sanitize(String(body.open_q7), 500) : null;
+  const open_q8 = body.open_q8 ? sanitize(String(body.open_q8), 500) : null;
   const user_name = body.user_name ? sanitize(String(body.user_name), 100) : null;
   const department = body.department ? sanitize(String(body.department), 100) : null;
   const consent = body.consent === true;
@@ -90,6 +91,7 @@ serve(async (req: Request) => {
     digital_level,
     open_q6,
     open_q7,
+    open_q8,
     user_name,
     department,
     consent,
