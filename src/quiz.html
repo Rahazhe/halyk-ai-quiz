@@ -337,6 +337,10 @@ textarea.form-input{resize:none;line-height:1.5;min-height:90px}
         <div class="open-q-label">Расскажите о себе: ваша роль в компании и что вас лично интересует в AI?<span class="open-optional">(необязательно)</span></div>
         <textarea id="openQ7" class="form-input" placeholder="Например: я CFO, интересует автоматизация финансовой отчётности и прогнозирование..." rows="4"></textarea>
       </div>
+      <div class="form-group" style="margin-top:8px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.08)">
+        <div class="open-q-label" style="color:var(--primary-light);font-size:14px">💬 Задайте любой вопрос AI<span class="open-optional">(необязательно)</span></div>
+        <textarea id="openQ8" class="form-input" placeholder="Например: как банк может помочь мне автоматизировать зарплатные выплаты? или: какой продукт лучше для выхода на рынок Китая?" rows="3"></textarea>
+      </div>
       <div class="open-btns">
         <button class="btn-primary" id="btnGetRec">Получить рекомендацию &rarr;</button>
         <button class="btn-outline" id="btnSkipOpen">Пропустить</button>
@@ -532,7 +536,7 @@ const TOTAL = 5;
 /* ===== STATE ===== */
 let cur = 0;
 let answers = new Array(TOTAL).fill(null);
-let openAnswers = { q6: '', q7: '' };
+let openAnswers = { q6: '', q7: '', q8: '' };
 let userData = { name: '', department: '', consent: false };
 let betaData = { interest: null, phone: '', email: '' };
 let recommendResult = null;
@@ -743,12 +747,14 @@ function showOpenQuestions() {
 document.getElementById('btnGetRec').addEventListener('click', () => {
   openAnswers.q6 = document.getElementById('openQ6').value.trim();
   openAnswers.q7 = document.getElementById('openQ7').value.trim();
+  openAnswers.q8 = document.getElementById('openQ8').value.trim();
   startLoadingAndRecommend();
 });
 
 document.getElementById('btnSkipOpen').addEventListener('click', () => {
   openAnswers.q6 = '';
   openAnswers.q7 = '';
+  openAnswers.q8 = '';
   startLoadingAndRecommend();
 });
 
@@ -771,6 +777,7 @@ function startLoadingAndRecommend() {
     digital_level: q5,
     open_q6: openAnswers.q6,
     open_q7: openAnswers.q7,
+    open_q8: openAnswers.q8,
     user_name: userData.name,
   };
 
@@ -846,12 +853,21 @@ function showResults(aiData) {
   });
 
   const personalInsight = aiData && aiData.personal_insight ? aiData.personal_insight : null;
+  const aiAnswer = aiData && aiData.ai_answer ? aiData.ai_answer : null;
   const usedAI = aiData && aiData.used_ai;
 
   const insightHtml = personalInsight
     ? `<div style="margin-bottom:28px;padding:20px 24px;background:linear-gradient(135deg,rgba(6,140,110,0.12),rgba(249,176,0,0.08));border:1px solid rgba(6,140,110,0.25);border-radius:var(--radius-lg)">
         <div style="font-size:12px;font-weight:700;color:var(--primary-light);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">✨ AI-рекомендация</div>
         <div style="font-size:15px;color:var(--text-light);line-height:1.7">${personalInsight}</div>
+       </div>`
+    : '';
+
+  const aiAnswerHtml = aiAnswer && openAnswers.q8
+    ? `<div style="margin-bottom:28px;padding:20px 24px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-lg)">
+        <div style="font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">💬 Ответ на ваш вопрос</div>
+        <div style="font-size:13px;color:var(--text-dim);margin-bottom:10px;font-style:italic">"${openAnswers.q8}"</div>
+        <div style="font-size:15px;color:var(--text-light);line-height:1.7">${aiAnswer}</div>
        </div>`
     : '';
 
@@ -862,6 +878,7 @@ function showResults(aiData) {
       <p>На основе ваших ответов и AI-анализа${usedAI ? ' <span style="color:var(--primary-light)">✓</span>' : ''}</p>
     </div>
     ${insightHtml}
+    ${aiAnswerHtml}
     <div class="section-label">Топ-3 продукта Халык Банка</div>
     ${cards}
     <div class="ai-trend-box">
@@ -958,6 +975,7 @@ function doFinalSubmit(top3) {
     digital_level:    answers[4],
     open_q6:          openAnswers.q6,
     open_q7:          openAnswers.q7,
+    open_q8:          openAnswers.q8,
     user_name:        userData.name,
     department:       userData.department,
     consent:          userData.consent,
@@ -1010,7 +1028,7 @@ function goToThanks(participantNum) {
 function resetAll() {
   cur = 0;
   answers = new Array(TOTAL).fill(null);
-  openAnswers = { q6: '', q7: '' };
+  openAnswers = { q6: '', q7: '', q8: '' };
   userData = { name: '', department: '', consent: false };
   betaData = { interest: null, phone: '', email: '' };
   recommendResult = null;

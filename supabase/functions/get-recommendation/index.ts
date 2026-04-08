@@ -140,7 +140,7 @@ serve(async (req: Request) => {
     return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400, headers: CORS_HEADERS });
   }
 
-  const { business_type, industry, company_size, priority, digital_level, open_q6, open_q7 } = body as Record<string, string>;
+  const { business_type, industry, company_size, priority, digital_level, open_q6, open_q7, open_q8 } = body as Record<string, string>;
 
   if (!business_type || !industry || !company_size || !priority || !digital_level) {
     return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400, headers: CORS_HEADERS });
@@ -159,11 +159,20 @@ serve(async (req: Request) => {
   const openaiKey = Deno.env.get('OPENAI_API_KEY');
   let aiProducts = null;
   let personalInsight = null;
+  let aiAnswer = null;
   let usedAI = false;
 
   if (openaiKey) {
     try {
       const top3Lines = top3.map((k, i) => `${i + 1}. ${PRODUCTS[k]?.name} — ${PRODUCTS[k]?.desc}`).join('\n');
+
+      const freeQuestionBlock = open_q8
+        ? `\n3. Участник задал вопрос: "${open_q8}"\nОтветь на него развёрнуто (3–5 предложений) как эксперт Halyk Bank. Ответ помести в поле "ai_answer".`
+        : '';
+
+      const jsonSchema = open_q8
+        ? `{"products":[{"key":"${top3[0]}","reason":"..."},{"key":"${top3[1]}","reason":"..."},{"key":"${top3[2]}","reason":"..."}],"personal_insight":"...","ai_answer":"..."}`
+        : `{"products":[{"key":"${top3[0]}","reason":"..."},{"key":"${top3[1]}","reason":"..."},{"key":"${top3[2]}","reason":"..."}],"personal_insight":"..."}`;
 
       const prompt = `Ты — AI-консультант Halyk Bank. Участник Demo Day прошёл квиз о банковских продуктах.
 
@@ -179,10 +188,10 @@ ${top3Lines}
 
 Задача:
 1. Для каждого из 3 продуктов напиши 1–2 предложения: почему именно этот продукт актуален для ЭТОГО конкретного человека с его задачами. Ссылайся на конкретные детали его ответов.
-2. Напиши одно персональное наблюдение или совет для этого участника (что стоит сделать в первую очередь).
+2. Напиши одно персональное наблюдение или совет для этого участника (что стоит сделать в первую очередь).${freeQuestionBlock}
 
 Отвечай строго в JSON без markdown:
-{"products":[{"key":"${top3[0]}","reason":"..."},{"key":"${top3[1]}","reason":"..."},{"key":"${top3[2]}","reason":"..."}],"personal_insight":"..."}
+${jsonSchema}
 Только JSON, без пояснений. На русском языке.`;
 
       const resp = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -192,7 +201,7 @@ ${top3Lines}
           model: 'gpt-4o-mini',
           messages: [{ role: 'user', content: prompt }],
           temperature: 0.7,
-          max_tokens: 700,
+          max_tokens: open_q8 ? 900 : 700,
           response_format: { type: 'json_object' },
         }),
       });
@@ -202,6 +211,7 @@ ${top3Lines}
         const parsed = JSON.parse(data.choices[0].message.content);
         aiProducts = parsed.products;
         personalInsight = parsed.personal_insight;
+        aiAnswer = parsed.ai_answer || null;
         usedAI = true;
       }
     } catch (e) {
@@ -215,6 +225,7 @@ ${top3Lines}
     ai_products: aiProducts,
     ai_trend: aiTrend,
     personal_insight: personalInsight,
+    ai_answer: aiAnswer,
     used_ai: usedAI,
   }), { status: 200, headers: CORS_HEADERS });
 });
