@@ -74,7 +74,7 @@ const Q4_MODS: Record<string, Record<string, number>> = {
   automate:      { online_duken: 10, halyk_market: 10, restaurants: 5, acquiring: 5 },
 };
 const Q5_MODS: Record<string, Record<string, number>> = {
-  full_online: { online_duken: 10, halyk_market: 10, mercury: 5 },
+  full_online: { online_duken: 10, halyk_market: 10, mercury: 5, acquiring: -25 },
   partial:     { acquiring: 5, online_duken: 5 },
   offline:     { acquiring: 10, rko: 5, online_duken: -5, halyk_market: -5 },
 };
